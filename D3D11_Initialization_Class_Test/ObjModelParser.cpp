@@ -93,6 +93,9 @@ bool ObjModelParser::LoadObj(const std::string& filename,
 	//UINT numMaterials = 0;
 	UINT numVertices = 0;
 	UINT numTriangles = 0;
+	UINT numUV = 0;
+	UINT numFaces = 0;
+	UINT numNormals = 0;
 	//UINT numBones = 0;
 	//UINT numAnimationClips = 0;
 
@@ -117,12 +120,37 @@ bool ObjModelParser::LoadObj(const std::string& filename,
 		std::getline(fin, ignore);
 		std::getline(fin, ignore);
 
-		std::vector<XMFLOAT4> vertices;
-		std::vector<XMFLOAT2> UV;
-		std::vector<XMFLOAT3> normals;
-		std::vector<UINT> faceVertices;
-		std::vector<UINT> faceUV;
-		std::vector<UINT> faceNormals;
+		while (std::getline(fin, ignore)){
+			
+			if (ignore[0] == 'v'){
+				
+				if (ignore[1] == 't'){
+					numUV++;
+				}
+				else if (ignore[1] == 'n'){
+					numNormals++;
+				}
+				else{
+					numVertices++;
+				}
+			}
+			else if (ignore[0] == 'f'){
+				numFaces++;
+			}
+		}
+
+		fin.seekg(fin.beg);
+		std::getline(fin, ignore);
+		std::getline(fin, ignore);
+		std::getline(fin, ignore);
+		std::getline(fin, ignore);
+
+		std::vector<XMFLOAT4> vertices(numVertices);
+		std::vector<XMFLOAT2> UV(numUV);
+		std::vector<XMFLOAT3> normals(numNormals);
+		std::vector<UINT> faceVertices(numFaces);
+		std::vector<UINT> faceUV(numFaces);
+		std::vector<UINT> faceNormals(numFaces);
 
 		while (std::getline(fin, ignore)){
 			int i = 0;
