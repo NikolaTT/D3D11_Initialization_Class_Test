@@ -91,17 +91,26 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AlphaBlendSorter.cpp" />
+    <ClCompile Include="BasicLevel.cpp" />
     <ClCompile Include="D3DInitializer.cpp" />
+    <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="GeometryLoader.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ObjModelParser.cpp" />
     <ClCompile Include="RenderStates.cpp" />
+    <ClCompile Include="Temp.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="ToshRenderer.cpp" />
     <ClCompile Include="WindowInitialization.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AlphaBlendSorter.h" />
+    <ClInclude Include="BasicLevel.h" />
     <ClInclude Include="ConstantBufferHelper.h" />
     <ClInclude Include="D3DInitializer.h" />
+    <ClInclude Include="Geometry.h" />
+    <ClInclude Include="GeometryLoader.h" />
     <ClInclude Include="LightTypes.h" />
     <ClInclude Include="ObjModelParser.h" />
     <ClInclude Include="RenderStates.h" />

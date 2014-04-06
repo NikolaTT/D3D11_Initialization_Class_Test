@@ -114,10 +114,10 @@ public:
 	ID3D11Buffer* g_pConstantBuffer = nullptr;
 	
 
-	DirectX::XMMATRIX g_World1;
-	DirectX::XMMATRIX g_World2;
-	DirectX::XMMATRIX g_View;
-	DirectX::XMMATRIX g_Projection;
+	DirectX::XMFLOAT4X4 g_World1;
+	DirectX::XMFLOAT4X4 g_World2;
+	DirectX::XMFLOAT4X4 g_View;
+	DirectX::XMFLOAT4X4 g_Projection;
 
 	ID3D11DepthStencilView* g_pDepthStencilView = nullptr;
 

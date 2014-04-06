@@ -5,15 +5,15 @@
 
 using std::sort;
 
-void AlphaBlendSorter::sortVertices(std::vector<VertexTypes::VertexBasic>& vertices, const DirectX::XMMATRIX &World,
-	const DirectX::XMMATRIX &View, const DirectX::XMMATRIX &Projection){
+void AlphaBlendSorter::sortVertices(std::vector<VertexTypes::VertexBasic>& vertices, const DirectX::XMFLOAT4X4 &WorldF,
+	const DirectX::XMFLOAT4X4 &ViewF, const DirectX::XMFLOAT4X4 &ProjectionF){
 
-	DirectX::XMFLOAT4X4 floatWorld;
-	DirectX::XMStoreFloat4x4(&floatWorld, World);
-	DirectX::XMFLOAT4X4 floatView;
-	DirectX::XMStoreFloat4x4(&floatView, View);
-	DirectX::XMFLOAT4X4 floatProjection;
-	DirectX::XMStoreFloat4x4(&floatProjection, Projection);
+	DirectX::XMFLOAT4X4 floatWorld = WorldF;
+	//DirectX::XMStoreFloat4x4(&floatWorld, World);
+	DirectX::XMFLOAT4X4 floatView = ViewF;
+	//DirectX::XMStoreFloat4x4(&floatView, View);
+	DirectX::XMFLOAT4X4 floatProjection = ProjectionF;
+	//DirectX::XMStoreFloat4x4(&floatProjection, Projection);
 
 	std::ofstream fout("Matrix.txt");
 	fout << "World:\n\n";
@@ -39,6 +39,10 @@ void AlphaBlendSorter::sortVertices(std::vector<VertexTypes::VertexBasic>& verti
 		}
 		fout << '\n';
 	}
+
+	DirectX::XMMATRIX World = DirectX::XMLoadFloat4x4(&WorldF);
+	DirectX::XMMATRIX View = DirectX::XMLoadFloat4x4(&ViewF);
+	DirectX::XMMATRIX Projection = DirectX::XMLoadFloat4x4(&ProjectionF);
 
 	DirectX::XMMATRIX worldViewProjection = World * View * Projection;
 	//DirectX::XMMATRIX worldViewProjection = DirectX::XMMatrixMultiply(World, View);

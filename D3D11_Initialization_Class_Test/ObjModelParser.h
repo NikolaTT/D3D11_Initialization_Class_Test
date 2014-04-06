@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include "VertexTypes.h"
+#include "Geometry.h"
 
 class ObjModelParser
 {
@@ -17,6 +18,8 @@ public:
 		std::vector<MeshGeometry::Subset>& subsets,
 		std::vector<M3dMaterial>& mats);*/
 
+	
+	bool LoadObj(Geometry& object);
 	bool LoadObj(const std::string& filename,
 		std::vector<VertexTypes::VertexBasic>& vertices,
 		std::vector<USHORT>& indices);

@@ -71,7 +71,7 @@ float4 PS(DomainOut pin) : SV_Target
 
 	//return litColor * gCubeSideTexture.Sample(samAnisotropic, pin.UV);
 	//return litColor + gCubeMap.Sample(samTriLinearSam, pin.PosL);
-
+	//return gCubeSideTexture.Sample(samAnisotropic, pin.UV);
 	//return gCubeMap.Sample(samTriLinearSam, pin.PosL);
 	//return float4(1.0f, 0.0f, 0.0f, 1.0f);
 }

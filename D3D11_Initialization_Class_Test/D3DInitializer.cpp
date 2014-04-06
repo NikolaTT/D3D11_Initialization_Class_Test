@@ -389,15 +389,16 @@ HRESULT D3DInitializer::CreateConstantBuffer(){
 }
 
 void D3DInitializer::InitializeWorldMatrix(){
-	g_World1 = DirectX::XMMatrixIdentity();
-	g_World2 = DirectX::XMMatrixIdentity();
+	DirectX::XMStoreFloat4x4(&g_World1, DirectX::XMMatrixIdentity());
+	DirectX::XMStoreFloat4x4(&g_World2, DirectX::XMMatrixIdentity()); 
 }
 
 void D3DInitializer::InitializeViewMatrix(){
-	DirectX::XMVECTOR Eye = DirectX::XMVectorSet(0.0f, 20.5f, 30.5f, 0.0f);
+	DirectX::XMVECTOR Eye = DirectX::XMVectorSet(1.5f, 2.5f, -2.5f, 0.0f);
+	//DirectX::XMVECTOR Eye = DirectX::XMVectorSet(0.0f, 20.5f, 30.5f, 0.0f);
 	DirectX::XMVECTOR At = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 	DirectX::XMVECTOR Up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	g_View = DirectX::XMMatrixLookAtLH(Eye, At, Up);
+	DirectX::XMStoreFloat4x4(&g_View, DirectX::XMMatrixLookAtLH(Eye, At, Up));
 }
 
 void D3DInitializer::InitializeProjectionMatrix(){
@@ -405,7 +406,8 @@ void D3DInitializer::InitializeProjectionMatrix(){
 	GetClientRect(g_hWnd, &rc);
 	width = rc.right - rc.left;
 	height = rc.bottom - rc.top;*/
-	g_Projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, width / (FLOAT)height, 0.01f, 100.0f);
+	DirectX::XMStoreFloat4x4(&g_Projection,
+		DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV2, width / (FLOAT)height, 0.01f, 100.0f));
 }
 
 HRESULT D3DInitializer::CreateDepthStencilView(){

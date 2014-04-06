@@ -33,10 +33,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	ofstream fout("debug_Main.txt");
 	fout << "Debug\n";
 
-	if (FAILED(mWinInit = new WindowInitializer(hInstance, nCmdShow)))
+	if ((mWinInit = new WindowInitializer(hInstance, nCmdShow)) == nullptr)
 		return 0;
 
-	if (FAILED(mD3DInit = new D3DInitializer(mWinInit->g_hWnd)))
+	if ((mD3DInit = new D3DInitializer(mWinInit->g_hWnd)) == nullptr)
 		return 0;
 
 	mTRenderer = new ToshRenderer(mD3DInit);
@@ -46,7 +46,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	std::vector<VertexTypes::VertexBasic> vertices;
 	std::vector<USHORT> indices;
 	ObjModelParser objMP;
-	objMP.LoadObj("IronMan2.obj", vertices, indices);
+	objMP.LoadObj("obj1.obj", vertices, indices);
 
 	
 
@@ -221,9 +221,9 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 		1.0f, 0);
 
 	ConstantBuffer cb1;
-	cb1.mWorld = XMMatrixTranspose(mD3DInitializer->g_World1);
-	cb1.mView = XMMatrixTranspose(mD3DInitializer->g_View);
-	cb1.mProjection = XMMatrixTranspose(mD3DInitializer->g_Projection);
+	cb1.mWorld = XMMatrixTranspose(DirectX::XMLoadFloat4x4(&mD3DInitializer->g_World1));
+	cb1.mView = XMMatrixTranspose(DirectX::XMLoadFloat4x4(&mD3DInitializer->g_View));
+	cb1.mProjection = XMMatrixTranspose(DirectX::XMLoadFloat4x4(&mD3DInitializer->g_Projection));
 	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mD3DInitializer->g_pConstantBuffer, 0, nullptr, &cb1, 0, 0);
 
 	cbPerFrame v_cbPerFrame;
@@ -238,33 +238,36 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 	v_cbPerFrame.gSpotLight = mTRenderer->mSpotLight;
 	v_cbPerFrame.gPointLight.Position.x = 0.0f;//70.0f*cosf(0.02f*rotatePointLightAngle);
 	v_cbPerFrame.gPointLight.Position.z = 20.5f;//70.0f*sinf(0.02f*rotatePointLightAngle);
-	v_cbPerFrame.gPointLight.Position.y = 30.5f;
+	v_cbPerFrame.gPointLight.Position.y = 4.5f;
 	
-	/*
+	
 	//Comment out point light rotation
 	XMVECTOR gPointLightPos = XMLoadFloat3(&v_cbPerFrame.gPointLight.Position);
 	gPointLightPos = XMVector3Transform(gPointLightPos, XMMatrixRotationY(-rotatePointLightAngle));
 	XMStoreFloat3(&v_cbPerFrame.gPointLight.Position, gPointLightPos);
-	//v_cbPerFrame.gPointLight.Position.y += 10;*/
+	//v_cbPerFrame.gPointLight.Position.y += 10;
 
-	rotatePointLightAngle += 0.000030;
+	rotatePointLightAngle += 0.00003;
 
 	
 	//Set Per Object Constant Buffer
 	v_cbPerObject.gMaterial = mTRenderer->CubeMat;
 
-	mD3DInitializer->g_World1 = XMMatrixRotationY(rotatePointLightAngle);
+	//DirectX::XMStoreFloat4x4(&mD3DInitializer->g_World1, XMMatrixRotationY(rotatePointLightAngle));
 
-	v_cbPerObject.gWorld = XMMatrixTranspose(mD3DInitializer->g_World1);
+	v_cbPerObject.gWorld = XMMatrixTranspose(DirectX::XMLoadFloat4x4(&mD3DInitializer->g_World1));
 
 	//Not true to original
 	DirectX::XMVECTOR det = XMMatrixDeterminant(v_cbPerObject.gWorld);
 	v_cbPerObject.gWorldInvTranspose = XMMatrixInverse(&det, v_cbPerObject.gWorld);
 	v_cbPerObject.gWorldInvTranspose = XMMatrixTranspose(v_cbPerObject.gWorldInvTranspose);
 
-	v_cbPerObject.gWorldViewProj = XMMatrixTranspose(mD3DInitializer->g_World1 * mD3DInitializer->g_View * mD3DInitializer->g_Projection);
+	v_cbPerObject.gWorldViewProj = XMMatrixTranspose(DirectX::XMLoadFloat4x4(&mD3DInitializer->g_World1)
+		* DirectX::XMLoadFloat4x4(&mD3DInitializer->g_View)
+		* DirectX::XMLoadFloat4x4(&mD3DInitializer->g_Projection));
 	v_cbPerObject.gTexTransform = DirectX::XMMatrixIdentity();
-	v_cbPerObject.gViewProj = XMMatrixTranspose(mD3DInitializer->g_View * mD3DInitializer->g_Projection);
+	v_cbPerObject.gViewProj = XMMatrixTranspose(DirectX::XMLoadFloat4x4(&mD3DInitializer->g_View)
+		* DirectX::XMLoadFloat4x4(&mD3DInitializer->g_Projection));
 
 	//
 	//End Constant Buffer Initialization
@@ -315,7 +318,6 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 
 
 	mD3DInitializer->g_pImmediateContext->Draw(numVertices, 0);
-
 	mD3DInitializer->g_pSwapChain->Present(0, 0);
 }
 
