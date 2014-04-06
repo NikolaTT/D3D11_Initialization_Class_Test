@@ -1,3 +1,6 @@
+#ifndef H_GEOMETRY_LOADER
+#define H_GEOMETRY_LOADER
+
 #include "Geometry.h"
 #include "ObjModelParser.h"
 
@@ -6,5 +9,7 @@
 class GeometryLoader{
 
 public:
-	GeometryLoader(std::string fileName, std::vector<Geometry>& geometry);
+	bool LoadGeometry(std::string fileName, std::vector<Geometry>& geometry);
 };
+
+#endif

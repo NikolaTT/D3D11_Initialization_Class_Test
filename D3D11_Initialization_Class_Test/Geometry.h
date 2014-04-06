@@ -1,7 +1,10 @@
+#ifndef H_GEOMETRY
+#define H_GEOMETRY
+
 #include <string>
 #include <vector>
 #include "VertexTypes.h"
-#include "ObjModelParser.h"
+
 
 typedef unsigned short USHORT;
 
@@ -14,3 +17,5 @@ public:
 
 	Geometry(std::string fileName);
 };
+
+#endif

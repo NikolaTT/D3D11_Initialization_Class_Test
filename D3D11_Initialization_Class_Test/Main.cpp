@@ -8,6 +8,7 @@
 #include <fstream>
 #include "RenderStates.h"
 #include "AlphaBlendSorter.h"
+#include "GeometryLoader.h"
 
 //changed VertexBasic Position to XMFLOAT4
 
@@ -20,6 +21,8 @@ float lightYPositionDelta = 0;
 int numVertices = 0;
 
 float blendFactor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+
+std::vector<Geometry> geometryVector;
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
@@ -43,23 +46,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	
 	
 
-	std::vector<VertexTypes::VertexBasic> vertices;
-	std::vector<USHORT> indices;
-	ObjModelParser objMP;
-	objMP.LoadObj("obj1.obj", vertices, indices);
-
+	GeometryLoader geometryLoader;
+	geometryLoader.LoadGeometry("geometryList.txt", geometryVector);
 	
 
-	fout << vertices.size() << '\n';
-
-	fout << "\n\nBegin output\n";
-	for (std::vector<VertexTypes::VertexBasic>::iterator iter = vertices.begin(); iter < vertices.end(); iter++){
-		fout << "Pos: " << iter->Pos.x << " " << iter->Pos.y << " " << iter->Pos.z << '\n';
-		//fout << "Tex: " << iter->Tex.x << " " << iter->Tex.y << '\n';
-		//fout << "Norm: " << iter->Normal.x << " " << iter->Normal.y << " " << iter->Normal.z << '\n';
-	}
-
-	fout.flush();
 
 	mD3DInit->CreateDepthStencilView();
 
@@ -104,42 +94,16 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	mD3DInit->InitializeProjectionMatrix();
 
 
-	fout << "\n\nBegin output\n";
-	for (std::vector<VertexTypes::VertexBasic>::iterator iter = vertices.begin(); iter < vertices.end(); iter++){
-		fout << "Pos: " << iter->Pos.x << " " << iter->Pos.y << " " << iter->Pos.z << " " << iter->Pos.w << '\n';
-		//fout << "Tex: " << iter->Tex.x << " " << iter->Tex.y << '\n';
-		//fout << "Norm: " << iter->Normal.x << " " << iter->Normal.y << " " << iter->Normal.z << '\n';
-	}
-
-	fout.flush();
 
 	AlphaBlendSorter alphaBlendSorter;
-	alphaBlendSorter.sortVertices(vertices, mD3DInit->g_World1, mD3DInit->g_View, mD3DInit->g_Projection);
+	alphaBlendSorter.sortVertices(geometryVector[0].vertices, mD3DInit->g_World1, mD3DInit->g_View, mD3DInit->g_Projection);
 
-	fout << "\n\nBegin output\n";
-	for (std::vector<VertexTypes::VertexBasic>::iterator iter = vertices.begin(); iter < vertices.end(); iter++){
+	numVertices = geometryVector[0].vertices.size();
+
+	mD3DInit->vertices = new VertexTypes::VertexBasic[geometryVector[0].vertices.size()];
+	for (int i = 0; i < geometryVector[0].vertices.size(); i++){
 		
-		float Dist = 0.0f;
-		Dist += iter->Pos.z;
-		iter++;
-		Dist += iter->Pos.z;
-		iter++;
-		Dist += iter->Pos.z;
-
-		fout << "Distance: " << Dist << '\n';
-		//fout << "Pos: " << iter->Pos.x << " " << iter->Pos.y << " " << iter->Pos.z << " " << iter->Pos.w << '\n';
-		//fout << "Tex: " << iter->Tex.x << " " << iter->Tex.y << '\n';
-		//fout << "Norm: " << iter->Normal.x << " " << iter->Normal.y << " " << iter->Normal.z << '\n';
-	}
-
-	fout.flush();
-
-	numVertices = vertices.size();
-
-	mD3DInit->vertices = new VertexTypes::VertexBasic[vertices.size()];
-	for (int i = 0; i < vertices.size(); i++){
-		
-		mD3DInit->vertices[i] = vertices[i];
+		mD3DInit->vertices[i] = geometryVector[0].vertices[i];
 
 		/*mD3DInit->vertices[i].Pos.x = rand() / (float)RAND_MAX;
 		mD3DInit->vertices[i].Pos.y = rand() / (float)RAND_MAX;
@@ -247,7 +211,7 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 	XMStoreFloat3(&v_cbPerFrame.gPointLight.Position, gPointLightPos);
 	//v_cbPerFrame.gPointLight.Position.y += 10;
 
-	rotatePointLightAngle += 0.00003;
+	rotatePointLightAngle += 0.0001;
 
 	
 	//Set Per Object Constant Buffer

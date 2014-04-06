@@ -2,8 +2,10 @@
 #include <fstream>
 
 
-GeometryLoader::GeometryLoader(std::string fileName, std::vector<Geometry>& geometry){
+bool GeometryLoader::LoadGeometry(std::string fileName, std::vector<Geometry>& geometry){
 	
+	bool loaded = false;
+
 	std::ifstream fin(fileName);
 	std::string geometryFile;
 
@@ -13,5 +15,7 @@ GeometryLoader::GeometryLoader(std::string fileName, std::vector<Geometry>& geom
 		Geometry object(geometryFile);
 		objModelParser.LoadObj(object);
 		geometry.push_back(object);
-	}
+		loaded = true;
+	}	
+	return loaded;
 }
