@@ -302,28 +302,18 @@ bool ObjModelParser::LoadObj(const std::string& filename,
 			}
 		}
 
-		fin.clear();
 		fin.seekg(fin.beg);
 		std::getline(fin, ignore);
 		std::getline(fin, ignore);
 		std::getline(fin, ignore);
 		std::getline(fin, ignore);
 
-		std::vector<XMFLOAT4> vertices;
-		vertices.reserve(numVertices);
-		std::vector<XMFLOAT2> UV;
-		UV.reserve(numUV);
-		std::vector<XMFLOAT3> normals;
-		normals.reserve(numNormals);
-		std::vector<UINT> faceVertices;
-		faceVertices.reserve(numFaces);
-		std::vector<UINT> faceUV;
-		faceUV.reserve(numFaces);
-		std::vector<UINT> faceNormals;
-		faceNormals.reserve(numFaces);
-
-		//fout << "\nNumVertices: " << numVertices << "\nNumUV: " << numUV << "\nNumNormals: " << numNormals << "\nNumFaces: " << numFaces;
-		//fout.flush();
+		std::vector<XMFLOAT4> vertices(numVertices);
+		std::vector<XMFLOAT2> UV(numUV);
+		std::vector<XMFLOAT3> normals(numNormals);
+		std::vector<UINT> faceVertices(numFaces);
+		std::vector<UINT> faceUV(numFaces);
+		std::vector<UINT> faceNormals(numFaces);
 
 		while (std::getline(fin, ignore)){
 			int i = 0;
