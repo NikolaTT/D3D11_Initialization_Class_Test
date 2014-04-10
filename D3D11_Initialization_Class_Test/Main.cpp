@@ -9,12 +9,13 @@
 #include "RenderStates.h"
 #include "AlphaBlendSorter.h"
 #include "GeometryLoader.h"
+#include "BasicLevel.h"
 
 //changed VertexBasic Position to XMFLOAT4
 
 using namespace DirectX; using std::vector; using std::ofstream;
 
-void Render(D3DInitializer* mD3DInit, ToshRenderer* mTRenderer, RenderStates* mTRenderStates);
+void Render(D3DInitializer* mD3DInit, ToshRenderer* mTRenderer, RenderStates* mTRenderStates, BasicLevel* basicLevel);
 
 float rotatePointLightAngle = 0;
 float lightYPositionDelta = 0;
@@ -45,9 +46,11 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	mTRenderer = new ToshRenderer(mD3DInit);
 	
 	
-
-	GeometryLoader geometryLoader;
-	geometryLoader.LoadGeometry("geometryList.txt", geometryVector);
+	BasicLevel *basicLevel = new BasicLevel("geometryList.txt");
+	basicLevel->setInitializer(mD3DInit);
+	//basicLevel->setVertices;
+	/*GeometryLoader geometryLoader;
+	geometryLoader.LoadGeometry("geometryList.txt", geometryVector);*/
 	
 
 
@@ -96,21 +99,27 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 
 	AlphaBlendSorter alphaBlendSorter;
-	alphaBlendSorter.sortVertices(geometryVector[0].vertices, mD3DInit->g_World1, mD3DInit->g_View, mD3DInit->g_Projection);
+	alphaBlendSorter.sortVertices(basicLevel->vertices, mD3DInit->g_World1, mD3DInit->g_View, mD3DInit->g_Projection);
 
-	numVertices = geometryVector[0].vertices.size();
+	//numVertices = geometryVector[0].vertices.size();
 
-	mD3DInit->vertices = new VertexTypes::VertexBasic[geometryVector[0].vertices.size()];
-	for (int i = 0; i < geometryVector[0].vertices.size(); i++){
+	//mD3DInit->vertices = new VertexTypes::VertexBasic[geometryVector[0].vertices.size()];
+
+
+	mD3DInit->vertices = new VertexTypes::VertexBasic[basicLevel->vertices.size()];
+	basicLevel->setVertices();
+	
+	
+	/*for (int i = 0; i < basicLevel->vertices.size(); i++){
 		
 		mD3DInit->vertices[i] = geometryVector[0].vertices[i];
 
 		/*mD3DInit->vertices[i].Pos.x = rand() / (float)RAND_MAX;
 		mD3DInit->vertices[i].Pos.y = rand() / (float)RAND_MAX;
 		mD3DInit->vertices[i].Pos.z = rand() / (float)RAND_MAX;*/
-	}
+	//}
 
-	mD3DInit->CreateVertexBuffer(numVertices);
+	mD3DInit->CreateVertexBuffer(basicLevel->vertices.size());
 
 	mD3DInit->SetVertexBuffer();
 
@@ -150,7 +159,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		}
 		else
 		{
-			Render(mD3DInit, mTRenderer, mTRenderStates);
+			Render(mD3DInit, mTRenderer, mTRenderStates, basicLevel);
 		}
 	}
 
@@ -161,7 +170,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 }
 
 
-void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderStates* mTRenderStates)
+void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderStates* mTRenderStates, BasicLevel* basicLevel)
 {
 	// Now set the rasterizer state and blend state.
 	// Blend factor global constant hardcoded
@@ -281,7 +290,7 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 
 
 
-	mD3DInitializer->g_pImmediateContext->Draw(numVertices, 0);
+	mD3DInitializer->g_pImmediateContext->Draw(basicLevel->vertices.size(), 0);
 	mD3DInitializer->g_pSwapChain->Present(0, 0);
 }
 
