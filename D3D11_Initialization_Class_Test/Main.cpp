@@ -291,8 +291,103 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 	mD3DInitializer->g_pImmediateContext->DSSetShaderResources(0, 1, &mTRenderer->g_pDisplacementTextureRV);
 
 
+	//draw cube to both depth and stencil buffer
+	//mD3DInitializer->g_pImmediateContext->Draw(basicLevel->vertices.size(), 0);
+	
+	//now draw mirror to stencil buffer only
+	//do not draw to render target
+	mD3DInitializer->g_pImmediateContext->OMSetBlendState(RenderStates::NoRenderTargetWritesBS, blendFactor, 0xffffffff);
 
-	mD3DInitializer->g_pImmediateContext->Draw(basicLevel->vertices.size(), 0);
+	// Render visible mirror pixels to stencil buffer.
+	// Do not write mirror depth to depth buffer at this point, otherwise it will occlude the reflection.
+	mD3DInitializer->g_pImmediateContext->OMSetDepthStencilState(RenderStates::MarkMirrorDSS, 1);
+
+	//levelGeometryVector[1] is Mirror, [0] is Cube; Makes assumptions.
+	mD3DInitializer->g_pImmediateContext->Draw(basicLevel->levelGeometryVector[1].vertices.size(),
+		basicLevel->levelGeometryVector[0].vertices.size());
+
+	// Restore states.
+	mD3DInitializer->g_pImmediateContext->OMSetDepthStencilState(0, 0);
+	mD3DInitializer->g_pImmediateContext->OMSetBlendState(0, blendFactor, 0xffffffff);
+
+	//
+	// Draw the cube reflection.
+	//
+	
+	
+	XMVECTOR mirrorPlane = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f); // xy plane
+	XMMATRIX R = XMMatrixReflect(mirrorPlane);
+	XMMATRIX world = R;
+	XMMATRIX worldInvTranspose = DirectX::XMMatrixInverse(&DirectX::XMMatrixDeterminant(world), DirectX::XMMatrixTranspose(world));
+	XMMATRIX worldViewProj = world *
+		DirectX::XMLoadFloat4x4(&mD3DInitializer->g_View) *
+		DirectX::XMLoadFloat4x4(&mD3DInitializer->g_Projection);
+	
+
+			// Cache the old light directions, and reflect the light directions.
+		XMFLOAT3 oldLightDirections[3];
+		for (int i = 0; i < 3; ++i)
+		{
+			oldLightDirections[i] = mDirLights[i].Direction;
+
+			XMVECTOR lightDir = XMLoadFloat3(&mDirLights[i].Direction);
+			XMVECTOR reflectedLightDir = XMVector3TransformNormal(lightDir, R);
+			XMStoreFloat3(&mDirLights[i].Direction, reflectedLightDir);
+		}
+
+		Effects::BasicFX->SetDirLights(mDirLights);
+
+		// Cull clockwise triangles for reflection.
+		mD3DInitializer->g_pImmediateContext->RSSetState(RenderStates::CullClockwiseRS);
+
+		// Only draw reflection into visible mirror pixels as marked by the stencil buffer. 
+		mD3DInitializer->g_pImmediateContext->OMSetDepthStencilState(RenderStates::DrawReflectionDSS, 1);
+		
+		mD3DInitializer->g_pImmediateContext->Draw(basicLevel->levelGeometryVector[0].vertices.size(), 0);
+
+		// Restore default states.
+		mD3DInitializer->g_pImmediateContext->RSSetState(0);
+		mD3DInitializer->g_pImmediateContext->OMSetDepthStencilState(0, 0);
+
+		// Restore light directions.
+		for (int i = 0; i < 3; ++i)
+		{
+			mDirLights[i].Direction = oldLightDirections[i];
+		}
+
+		
+	
+
+	//
+	// Draw the mirror to the back buffer as usual but with transparency
+	// blending so the reflection shows through.
+	// 
+
+	activeTech->GetDesc(&techDesc);
+	for (UINT p = 0; p < techDesc.Passes; ++p)
+	{
+		ID3DX11EffectPass* pass = activeTech->GetPassByIndex(p);
+
+		md3dImmediateContext->IASetVertexBuffers(0, 1, &mRoomVB, &stride, &offset);
+
+		// Set per object constants.
+		XMMATRIX world = XMLoadFloat4x4(&mRoomWorld);
+		XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
+		XMMATRIX worldViewProj = world*view*proj;
+
+		Effects::BasicFX->SetWorld(world);
+		Effects::BasicFX->SetWorldInvTranspose(worldInvTranspose);
+		Effects::BasicFX->SetWorldViewProj(worldViewProj);
+		Effects::BasicFX->SetTexTransform(XMMatrixIdentity());
+		Effects::BasicFX->SetMaterial(mMirrorMat);
+		Effects::BasicFX->SetDiffuseMap(mMirrorDiffuseMapSRV);
+
+		// Mirror
+		md3dImmediateContext->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
+		pass->Apply(0, md3dImmediateContext);
+		md3dImmediateContext->Draw(6, 24);
+	}
+	
 	mD3DInitializer->g_pSwapChain->Present(0, 0);
 }
 

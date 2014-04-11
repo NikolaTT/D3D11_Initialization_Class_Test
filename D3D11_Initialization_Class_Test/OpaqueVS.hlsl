@@ -115,7 +115,7 @@ VertexOut VS(VertexIn vin)
 
 	vout.PosL = vin.PosL;
 	// Transform to world space space.
-	vout.PosW = mul(float4(vin.PosL, 1.0f), gWorld).xyz;
+	vout.PosW = mul(vin.PosL, gWorld).xyz;
 	vout.NormalW = mul(vin.NormalL, (float3x3)gWorldInvTranspose);
 	vout.PosH = float4(0, 0, 0, 0);
 	vout.NormalL = vin.NormalL;

@@ -127,6 +127,18 @@
     <FxCompile Include="TransparentVS.hlsl">
       <Filter>Shaders_TransparentObjects</Filter>
     </FxCompile>
+    <FxCompile Include="OpaqueDS.hlsl">
+      <Filter>Shaders_OpaqueObjects</Filter>
+    </FxCompile>
+    <FxCompile Include="OpaqueHS.hlsl">
+      <Filter>Shaders_OpaqueObjects</Filter>
+    </FxCompile>
+    <FxCompile Include="OpaquePS.hlsl">
+      <Filter>Shaders_OpaqueObjects</Filter>
+    </FxCompile>
+    <FxCompile Include="OpaqueVS.hlsl">
+      <Filter>Shaders_OpaqueObjects</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="VertexHelper.txt">
