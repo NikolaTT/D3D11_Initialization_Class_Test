@@ -92,7 +92,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 	mD3DInit->InitializeWorldMatrix();
 
-	mD3DInit->InitializeViewMatrix();
+	mD3DInit->InitializeViewMatrix(12.5f, 2.5f, -3.5f);
 
 	mD3DInit->InitializeProjectionMatrix();
 
@@ -175,9 +175,9 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 	// Now set the rasterizer state and blend state.
 	// Blend factor global constant hardcoded
 
-	mD3DInitializer->g_pImmediateContext->RSSetState(mTRenderStates->NoCullRS);
-	mD3DInitializer->g_pImmediateContext->OMSetBlendState(mTRenderStates->TransparentBS, blendFactor, 0xffffffff);
-	mD3DInitializer->g_pImmediateContext->OMSetDepthStencilState(mTRenderStates->TutorialDDS, 1.0f);
+	mD3DInitializer->g_pImmediateContext->RSSetState(mTRenderStates->WireframeRS);
+	//mD3DInitializer->g_pImmediateContext->OMSetBlendState(mTRenderStates->TransparentBS, blendFactor, 0xffffffff);
+	//mD3DInitializer->g_pImmediateContext->OMSetDepthStencilState(mTRenderStates->TutorialDDS, 1.0f);
 	
 
 
@@ -223,6 +223,12 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 	rotatePointLightAngle += 0.0001;
 
 	
+	XMFLOAT3 eyePosition(12.5f, 2.5f, -3.5f);
+	XMVECTOR eyePositionVector = XMLoadFloat3(&eyePosition);
+	XMVector3Transform(eyePositionVector, XMMatrixRotationY(-rotatePointLightAngle));
+	XMStoreFloat3(&eyePosition, eyePositionVector);
+	mD3DInitializer->InitializeViewMatrix(eyePosition.x, eyePosition.y, eyePosition.z);
+
 	//Set Per Object Constant Buffer
 	v_cbPerObject.gMaterial = mTRenderer->CubeMat;
 

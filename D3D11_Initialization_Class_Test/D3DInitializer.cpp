@@ -393,8 +393,8 @@ void D3DInitializer::InitializeWorldMatrix(){
 	DirectX::XMStoreFloat4x4(&g_World2, DirectX::XMMatrixIdentity()); 
 }
 
-void D3DInitializer::InitializeViewMatrix(){
-	DirectX::XMVECTOR Eye = DirectX::XMVectorSet(1.5f, 2.5f, -2.5f, 0.0f);
+void D3DInitializer::InitializeViewMatrix(float x, float y, float z){
+	DirectX::XMVECTOR Eye = DirectX::XMVectorSet(x, y, z, 0.0f);
 	//DirectX::XMVECTOR Eye = DirectX::XMVectorSet(12.5f, 2.5f, -3.5f, 0.0f);
 	//DirectX::XMVECTOR Eye = DirectX::XMVectorSet(0.0f, 20.5f, 30.5f, 0.0f);
 	DirectX::XMVECTOR At = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);

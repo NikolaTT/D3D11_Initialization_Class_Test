@@ -174,7 +174,7 @@ public:
 	HRESULT CreateConstantBuffer();
 
 	void InitializeWorldMatrix();
-	void InitializeViewMatrix();
+	void InitializeViewMatrix(float x, float y, float z);
 	void InitializeProjectionMatrix();
 
 	HRESULT CreateDepthStencilView();
