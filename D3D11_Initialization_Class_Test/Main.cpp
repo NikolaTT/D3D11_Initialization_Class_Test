@@ -175,7 +175,7 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 	// Now set the rasterizer state and blend state.
 	// Blend factor global constant hardcoded
 
-	mD3DInitializer->g_pImmediateContext->RSSetState(mTRenderStates->WireframeRS);
+	mD3DInitializer->g_pImmediateContext->RSSetState(mTRenderStates->TutorialRS);
 	//mD3DInitializer->g_pImmediateContext->OMSetBlendState(mTRenderStates->TransparentBS, blendFactor, 0xffffffff);
 	//mD3DInitializer->g_pImmediateContext->OMSetDepthStencilState(mTRenderStates->TutorialDDS, 1.0f);
 	

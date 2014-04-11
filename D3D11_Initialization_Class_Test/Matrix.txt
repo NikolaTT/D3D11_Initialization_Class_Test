@@ -33,7 +33,7 @@ WorldViewProjection:
 Begin output
 Distance: 43.6767
 Distance: 42.9615
-Distance: 42.3284
+Distance: 42.3285
 Distance: 42.0537
 Distance: 41.5998
 Distance: 41.4484
