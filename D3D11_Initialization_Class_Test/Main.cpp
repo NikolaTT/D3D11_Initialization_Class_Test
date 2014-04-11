@@ -21,13 +21,9 @@ float rotatePointLightAngle = 0;
 float lightYPositionDelta = 0;
 int numVertices = 0;
 
-ofstream fout("EyePositionDebug.txt");
-
 float blendFactor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
 std::vector<Geometry> geometryVector;
-
-AlphaBlendSorter alphaBlendSorter;
 
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
@@ -102,8 +98,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 
 
-	
-	
+	AlphaBlendSorter alphaBlendSorter;
+	alphaBlendSorter.sortVertices(basicLevel->vertices, mD3DInit->g_World1, mD3DInit->g_View, mD3DInit->g_Projection);
 
 	//numVertices = geometryVector[0].vertices.size();
 
@@ -226,23 +222,12 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 
 	rotatePointLightAngle += 0.0001;
 
-	//rotate player position
+	
 	XMFLOAT3 eyePosition(12.5f, 2.5f, -3.5f);
 	XMVECTOR eyePositionVector = XMLoadFloat3(&eyePosition);
-	eyePositionVector = XMVector3Transform(eyePositionVector, XMMatrixRotationY(-rotatePointLightAngle));
+	XMVector3Transform(eyePositionVector, XMMatrixRotationY(-rotatePointLightAngle));
 	XMStoreFloat3(&eyePosition, eyePositionVector);
-
-	fout << eyePosition.x << "  " << eyePosition.y << "  " << eyePosition.z << '\n';
-	fout.flush();
-
 	mD3DInitializer->InitializeViewMatrix(eyePosition.x, eyePosition.y, eyePosition.z);
-	alphaBlendSorter.sortVertices(basicLevel->vertices, mD3DInitializer->g_World1,
-		mD3DInitializer->g_View, mD3DInitializer->g_Projection);
-	mD3DInitializer->vertices = new VertexTypes::VertexBasic[basicLevel->vertices.size()];
-	basicLevel->setVertices();
-	mD3DInitializer->CreateVertexBuffer(basicLevel->vertices.size());
-	mD3DInitializer->SetVertexBuffer();
-
 
 	//Set Per Object Constant Buffer
 	v_cbPerObject.gMaterial = mTRenderer->CubeMat;
