@@ -8,10 +8,10 @@ World:
 
 View:
 
-0.857493 -0.334908 -0.390567 0 
--0 0.759125 -0.650945 0 
-0.514496 0.55818 0.650945 0 
--1.19209e-007 1.19209e-007 3.84057 1 
+0.26963 -0.182113 -0.945587 0 
+-0 0.981954 -0.189117 0 
+0.962964 0.0509917 0.264764 0 
+0 -1.3411e-007 13.2193 1 
 
 
 Projection:
@@ -24,22 +24,34 @@ Projection:
 
 WorldViewProjection:
 
-0.64312 -0.334908 -0.390606 -0.390567 
-0 0.759125 -0.65101 -0.650945 
-0.385872 0.55818 0.65101 0.650945 
--8.9407e-008 1.19209e-007 3.83096 3.84057 
+0.202222 -0.182113 -0.945681 -0.945587 
+0 0.981954 -0.189136 -0.189117 
+0.722223 0.0509917 0.264791 0.264764 
+0 -1.3411e-007 13.2106 13.2193 
 
 
 Begin output
-Distance: 14.5035
-Distance: 14.5035
-Distance: 13.9827
-Distance: 12.4203
-Distance: 12.4203
-Distance: 11.6391
-Distance: 11.3786
-Distance: 10.5974
-Distance: 9.81623
-Distance: 9.29542
-Distance: 9.03501
-Distance: 8.5142
+Distance: 43.6767
+Distance: 42.9615
+Distance: 42.3284
+Distance: 42.0537
+Distance: 41.5998
+Distance: 41.4484
+Distance: 40.011
+Distance: 39.784
+Distance: 39.3301
+Distance: 39.0275
+Distance: 38.4223
+Distance: 38.0891
+Distance: 37.7414
+Distance: 37.2874
+Distance: 36.7408
+Distance: 36.5464
+Distance: 36.3796
+Distance: 33.785
+Distance: 30.9588
+Distance: 28.2622
+Distance: 28.0678
+Distance: 26.7843
+Distance: 22.545
+Distance: 21.0671

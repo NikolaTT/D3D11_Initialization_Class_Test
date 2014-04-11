@@ -223,11 +223,7 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 	rotatePointLightAngle += 0.0001;
 
 	
-	XMFLOAT3 eyePosition(12.5f, 2.5f, -3.5f);
-	XMVECTOR eyePositionVector = XMLoadFloat3(&eyePosition);
-	XMVector3Transform(eyePositionVector, XMMatrixRotationY(-rotatePointLightAngle));
-	XMStoreFloat3(&eyePosition, eyePositionVector);
-	mD3DInitializer->InitializeViewMatrix(eyePosition.x, eyePosition.y, eyePosition.z);
+	
 
 	//Set Per Object Constant Buffer
 	v_cbPerObject.gMaterial = mTRenderer->CubeMat;
