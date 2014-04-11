@@ -56,7 +56,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 	mD3DInit->CreateDepthStencilView();
 
-	mD3DInit->CompileShaderFromFile(L"MyFirstVS.hlsl", "VS", "vs_4_0", &(mD3DInit->pVSBlob));
+	mD3DInit->CompileShaderFromFile(L"TransparentVS.hlsl", "VS", "vs_4_0", &(mD3DInit->pVSBlob));
 
 	mD3DInit->CreateVertexShader(mD3DInit->pVSBlob->GetBufferPointer(), mD3DInit->pVSBlob->GetBufferSize(), nullptr, &(mD3DInit->g_pVertexShader));
 
@@ -75,24 +75,24 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 	mD3DInit->setInputLayout();
 
-	mD3DInit->CompileShaderFromFile(L"MyFirstPS.hlsl", "PS", "ps_4_0", &(mD3DInit->pPSBlob));
+	mD3DInit->CompileShaderFromFile(L"TransparentPS.hlsl", "PS", "ps_4_0", &(mD3DInit->pPSBlob));
 
 	mD3DInit->CreatePixelShader(mD3DInit->pPSBlob->GetBufferPointer(), mD3DInit->pPSBlob->GetBufferSize(), nullptr,
 		&mD3DInit->g_pPixelShader);
 
-	mD3DInit->CompileShaderFromFile(L"MyFirstHS.hlsl", "HS", "hs_5_0", &(mD3DInit->pHSBlob));
+	mD3DInit->CompileShaderFromFile(L"TransparentHS.hlsl", "HS", "hs_5_0", &(mD3DInit->pHSBlob));
 
 	mD3DInit->CreateHullShader(mD3DInit->pHSBlob->GetBufferPointer(), mD3DInit->pHSBlob->GetBufferSize(), nullptr,
 		&mD3DInit->g_pHullShader);
 
-	mD3DInit->CompileShaderFromFile(L"MyFirstDS.hlsl", "DS", "ds_5_0", &(mD3DInit->pDSBlob));
+	mD3DInit->CompileShaderFromFile(L"TransparentDS.hlsl", "DS", "ds_5_0", &(mD3DInit->pDSBlob));
 
 	mD3DInit->CreateDomainShader(mD3DInit->pDSBlob->GetBufferPointer(), mD3DInit->pDSBlob->GetBufferSize(), nullptr,
 		&mD3DInit->g_pDomainShader);
 
 	mD3DInit->InitializeWorldMatrix();
 
-	mD3DInit->InitializeViewMatrix(12.5f, 2.5f, -3.5f);
+	mD3DInit->InitializeViewMatrix(12.5f, 2.5f, 3.5f);
 
 	mD3DInit->InitializeProjectionMatrix();
 

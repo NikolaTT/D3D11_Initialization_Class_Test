@@ -19,6 +19,12 @@
     <Filter Include="Misc">
       <UniqueIdentifier>{2c9c74a8-8922-4a3c-9a28-7a66929ca302}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders_TransparentObjects">
+      <UniqueIdentifier>{c3db4f1b-3df7-4c3c-82f6-29796008c7b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders_OpaqueObjects">
+      <UniqueIdentifier>{7b0e3ec4-9044-4415-869b-7fe602d4bb6a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WindowInitialization.cpp">
@@ -97,18 +103,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="MyFirstVS.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="MyFirstPS.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="MyFirstHS.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="MyFirstDS.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="Tutorial02_PS.hlsl">
       <Filter>Misc</Filter>
     </FxCompile>
@@ -120,6 +114,18 @@
     </FxCompile>
     <FxCompile Include="Tutorial05_VS.hlsl">
       <Filter>Misc</Filter>
+    </FxCompile>
+    <FxCompile Include="TransparentDS.hlsl">
+      <Filter>Shaders_TransparentObjects</Filter>
+    </FxCompile>
+    <FxCompile Include="TransparentHS.hlsl">
+      <Filter>Shaders_TransparentObjects</Filter>
+    </FxCompile>
+    <FxCompile Include="TransparentPS.hlsl">
+      <Filter>Shaders_TransparentObjects</Filter>
+    </FxCompile>
+    <FxCompile Include="TransparentVS.hlsl">
+      <Filter>Shaders_TransparentObjects</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
