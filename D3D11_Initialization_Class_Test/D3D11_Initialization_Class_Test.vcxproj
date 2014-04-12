@@ -93,6 +93,7 @@
     <ClCompile Include="AlphaBlendSorter.cpp" />
     <ClCompile Include="BasicLevel.cpp" />
     <ClCompile Include="D3DInitializer.cpp" />
+    <ClCompile Include="GameHandler.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="GeometryLoader.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -109,11 +110,13 @@
     <ClInclude Include="BasicLevel.h" />
     <ClInclude Include="ConstantBufferHelper.h" />
     <ClInclude Include="D3DInitializer.h" />
+    <ClInclude Include="GameHandler.h" />
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="GeometryLoader.h" />
     <ClInclude Include="LightTypes.h" />
     <ClInclude Include="ObjModelParser.h" />
     <ClInclude Include="RenderStates.h" />
+    <ClInclude Include="ShaderHandler.h" />
     <ClInclude Include="ToshRenderer.h" />
     <ClInclude Include="VertexCompareFunctions.h" />
     <ClInclude Include="VertexTypes.h" />
