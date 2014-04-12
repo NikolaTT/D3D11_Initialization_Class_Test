@@ -44,19 +44,19 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		return 0;
 
 	mTRenderer = new ToshRenderer(mD3DInit);
-	
-	
+
+
 	BasicLevel *basicLevel = new BasicLevel("geometryList.txt");
 	basicLevel->setInitializer(mD3DInit);
 	//basicLevel->setVertices;
 	/*GeometryLoader geometryLoader;
 	geometryLoader.LoadGeometry("geometryList.txt", geometryVector);*/
-	
+
 
 
 	mD3DInit->CreateDepthStencilView();
 
-	mD3DInit->CompileShaderFromFile(L"TransparentVS.hlsl", "VS", "vs_4_0", &(mD3DInit->pVSBlob));
+	mD3DInit->CompileShaderFromFile(L"OpaqueVS.hlsl", "VS", "vs_4_0", &(mD3DInit->pVSBlob));
 
 	mD3DInit->CreateVertexShader(mD3DInit->pVSBlob->GetBufferPointer(), mD3DInit->pVSBlob->GetBufferSize(), nullptr, &(mD3DInit->g_pVertexShader));
 
@@ -75,17 +75,17 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 	mD3DInit->setInputLayout();
 
-	mD3DInit->CompileShaderFromFile(L"TransparentPS.hlsl", "PS", "ps_4_0", &(mD3DInit->pPSBlob));
+	mD3DInit->CompileShaderFromFile(L"OpaquePS.hlsl", "PS", "ps_4_0", &(mD3DInit->pPSBlob));
 
 	mD3DInit->CreatePixelShader(mD3DInit->pPSBlob->GetBufferPointer(), mD3DInit->pPSBlob->GetBufferSize(), nullptr,
 		&mD3DInit->g_pPixelShader);
 
-	mD3DInit->CompileShaderFromFile(L"TransparentHS.hlsl", "HS", "hs_5_0", &(mD3DInit->pHSBlob));
+	mD3DInit->CompileShaderFromFile(L"OpaqueHS.hlsl", "HS", "hs_5_0", &(mD3DInit->pHSBlob));
 
 	mD3DInit->CreateHullShader(mD3DInit->pHSBlob->GetBufferPointer(), mD3DInit->pHSBlob->GetBufferSize(), nullptr,
 		&mD3DInit->g_pHullShader);
 
-	mD3DInit->CompileShaderFromFile(L"TransparentDS.hlsl", "DS", "ds_5_0", &(mD3DInit->pDSBlob));
+	mD3DInit->CompileShaderFromFile(L"OpaqueDS.hlsl", "DS", "ds_5_0", &(mD3DInit->pDSBlob));
 
 	mD3DInit->CreateDomainShader(mD3DInit->pDSBlob->GetBufferPointer(), mD3DInit->pDSBlob->GetBufferSize(), nullptr,
 		&mD3DInit->g_pDomainShader);
@@ -98,8 +98,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 
 
-	AlphaBlendSorter alphaBlendSorter;
-	alphaBlendSorter.sortVertices(basicLevel->vertices, mD3DInit->g_World1, mD3DInit->g_View, mD3DInit->g_Projection);
+	//AlphaBlendSorter alphaBlendSorter;
+	//alphaBlendSorter.sortVertices(basicLevel->vertices, mD3DInit->g_World1, mD3DInit->g_View, mD3DInit->g_Projection);
 
 	//numVertices = geometryVector[0].vertices.size();
 
@@ -108,10 +108,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 	mD3DInit->vertices = new VertexTypes::VertexBasic[basicLevel->vertices.size()];
 	basicLevel->setVertices();
-	
-	
+
+
 	/*for (int i = 0; i < basicLevel->vertices.size(); i++){
-		
+
 		mD3DInit->vertices[i] = geometryVector[0].vertices[i];
 
 		/*mD3DInit->vertices[i].Pos.x = rand() / (float)RAND_MAX;
@@ -127,9 +127,9 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 	mD3DInit->CreateConstantBuffer();
 
-	
 
-	
+
+
 
 	RenderStates* mTRenderStates = new RenderStates();
 	mTRenderStates->InitAll(mD3DInit->g_pd3dDevice);
@@ -165,8 +165,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 
 	return (int)msg.wParam;
-	
-	
+
+
 }
 
 
@@ -178,7 +178,7 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 	mD3DInitializer->g_pImmediateContext->RSSetState(mTRenderStates->TutorialRS);
 	//mD3DInitializer->g_pImmediateContext->OMSetBlendState(mTRenderStates->TransparentBS, blendFactor, 0xffffffff);
 	//mD3DInitializer->g_pImmediateContext->OMSetDepthStencilState(mTRenderStates->TutorialDDS, 1.0f);
-	
+
 
 
 
@@ -201,19 +201,19 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 
 	cbPerFrame v_cbPerFrame;
 	cbPerObject v_cbPerObject;
-	
-	
+
+
 	//Set Per Frame Constant Buffer
-	
+
 	v_cbPerFrame.gDirLight = mTRenderer->mDirLight;
-	v_cbPerFrame.gEyePosW = DirectX::XMFLOAT3(1.5f, 2.5f, -2.5f);
+	v_cbPerFrame.gEyePosW = DirectX::XMFLOAT3(12.5f, 2.5f, 3.5f);
 	v_cbPerFrame.gPointLight = mTRenderer->mPointLight;
 	v_cbPerFrame.gSpotLight = mTRenderer->mSpotLight;
 	v_cbPerFrame.gPointLight.Position.x = 0.0f;//70.0f*cosf(0.02f*rotatePointLightAngle);
 	v_cbPerFrame.gPointLight.Position.z = 20.5f;//70.0f*sinf(0.02f*rotatePointLightAngle);
 	v_cbPerFrame.gPointLight.Position.y = 4.5f;
-	
-	
+
+
 	//Comment out point light rotation
 	XMVECTOR gPointLightPos = XMLoadFloat3(&v_cbPerFrame.gPointLight.Position);
 	gPointLightPos = XMVector3Transform(gPointLightPos, XMMatrixRotationY(-rotatePointLightAngle));
@@ -221,9 +221,9 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 	//v_cbPerFrame.gPointLight.Position.y += 10;
 
 	rotatePointLightAngle += 0.0001;
+	
 
-	
-	
+
 
 	//Set Per Object Constant Buffer
 	v_cbPerObject.gMaterial = mTRenderer->CubeMat;
@@ -247,8 +247,8 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 	//
 	//End Constant Buffer Initialization
 	//
-	
-	
+
+
 	//Set VS Constant Buffer
 	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mTRenderer->g_pcbPerFrame, 0, nullptr, &v_cbPerFrame, 0, 0);
 	mD3DInitializer->g_pImmediateContext->VSSetConstantBuffers(1, 1, &mTRenderer->g_pcbPerFrame);
@@ -256,8 +256,8 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mTRenderer->g_pcbPerObject, 0, nullptr, &v_cbPerObject, 0, 0);
 	mD3DInitializer->g_pImmediateContext->VSSetConstantBuffers(2, 1, &mTRenderer->g_pcbPerObject);
 
-	
-	
+
+
 	//Set PS Constant Buffer
 	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mTRenderer->g_pcbPerFrame, 0, nullptr, &v_cbPerFrame, 0, 0);
 	mD3DInitializer->g_pImmediateContext->PSSetConstantBuffers(1, 1, &mTRenderer->g_pcbPerFrame);
@@ -270,19 +270,19 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 	mD3DInitializer->g_pImmediateContext->PSSetShaderResources(0, 1, &mTRenderer->g_pCubeMapRV);
 	mD3DInitializer->g_pImmediateContext->PSSetShaderResources(1, 1, &mTRenderer->g_pTextureRV);
 
-	
+
 
 	//mD3DInitializer->g_pImmediateContext->VSSetConstantBuffers(0, 1, &mD3DInitializer->g_pConstantBuffer);
 	//mD3DInitializer->g_pImmediateContext->HSSetConstantBuffers(0, 1, &mD3DInitializer->g_pConstantBuffer);
 	//mD3DInitializer->g_pImmediateContext->DSSetConstantBuffers(0, 1, &mD3DInitializer->g_pConstantBuffer);
-	
-	
-	
-	
+
+
+
+
 	//Set DS Constant Buffer
 	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mTRenderer->g_pcbPerFrame, 0, nullptr, &v_cbPerFrame, 0, 0);
 	mD3DInitializer->g_pImmediateContext->DSSetConstantBuffers(1, 1, &mTRenderer->g_pcbPerFrame);
-	
+
 	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mTRenderer->g_pcbPerObject, 0, nullptr, &v_cbPerObject, 0, 0);
 	mD3DInitializer->g_pImmediateContext->DSSetConstantBuffers(2, 1, &mTRenderer->g_pcbPerObject);
 
@@ -291,9 +291,9 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 	mD3DInitializer->g_pImmediateContext->DSSetShaderResources(0, 1, &mTRenderer->g_pDisplacementTextureRV);
 
 
-	//draw cube to both depth and stencil buffer
-	//mD3DInitializer->g_pImmediateContext->Draw(basicLevel->vertices.size(), 0);
-	
+	//draw cube to both depth and stencil buffer as normal
+	mD3DInitializer->g_pImmediateContext->Draw(basicLevel->levelGeometryVector[0].vertices.size(), 0);
+
 	//now draw mirror to stencil buffer only
 	//do not draw to render target
 	mD3DInitializer->g_pImmediateContext->OMSetBlendState(RenderStates::NoRenderTargetWritesBS, blendFactor, 0xffffffff);
@@ -313,8 +313,8 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 	//
 	// Draw the cube reflection.
 	//
-	
-	
+
+
 	XMVECTOR mirrorPlane = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f); // xy plane
 	XMMATRIX R = XMMatrixReflect(mirrorPlane);
 	XMMATRIX world = R;
@@ -322,72 +322,64 @@ void Render(D3DInitializer* mD3DInitializer, ToshRenderer* mTRenderer, RenderSta
 	XMMATRIX worldViewProj = world *
 		DirectX::XMLoadFloat4x4(&mD3DInitializer->g_View) *
 		DirectX::XMLoadFloat4x4(&mD3DInitializer->g_Projection);
-	
 
-			// Cache the old light directions, and reflect the light directions.
-		XMFLOAT3 oldLightDirections[3];
-		for (int i = 0; i < 3; ++i)
-		{
-			oldLightDirections[i] = mDirLights[i].Direction;
 
-			XMVECTOR lightDir = XMLoadFloat3(&mDirLights[i].Direction);
-			XMVECTOR reflectedLightDir = XMVector3TransformNormal(lightDir, R);
-			XMStoreFloat3(&mDirLights[i].Direction, reflectedLightDir);
-		}
+	// Cache the old light directions, and reflect the light directions.
+	// Not using directional lights so code under is commented.
+	/*XMFLOAT3 oldLightDirections[3];
+	for (int i = 0; i < 3; ++i)
+	{
+	oldLightDirections[i] = mDirLights[i].Direction;
 
-		Effects::BasicFX->SetDirLights(mDirLights);
+	XMVECTOR lightDir = XMLoadFloat3(&mDirLights[i].Direction);
+	XMVECTOR reflectedLightDir = XMVector3TransformNormal(lightDir, R);
+	XMStoreFloat3(&mDirLights[i].Direction, reflectedLightDir);
+	}*/
 
-		// Cull clockwise triangles for reflection.
-		mD3DInitializer->g_pImmediateContext->RSSetState(RenderStates::CullClockwiseRS);
+	//
+	//Still need  to mirror point light though.
+	//
 
-		// Only draw reflection into visible mirror pixels as marked by the stencil buffer. 
-		mD3DInitializer->g_pImmediateContext->OMSetDepthStencilState(RenderStates::DrawReflectionDSS, 1);
-		
-		mD3DInitializer->g_pImmediateContext->Draw(basicLevel->levelGeometryVector[0].vertices.size(), 0);
+	// Cull clockwise triangles for reflection.
+	mD3DInitializer->g_pImmediateContext->RSSetState(RenderStates::CullClockwiseRS);
 
-		// Restore default states.
-		mD3DInitializer->g_pImmediateContext->RSSetState(0);
-		mD3DInitializer->g_pImmediateContext->OMSetDepthStencilState(0, 0);
+	// Only draw reflection into visible mirror pixels as marked by the stencil buffer. 
+	mD3DInitializer->g_pImmediateContext->OMSetDepthStencilState(RenderStates::DrawReflectionDSS, 1);
 
-		// Restore light directions.
-		for (int i = 0; i < 3; ++i)
-		{
-			mDirLights[i].Direction = oldLightDirections[i];
-		}
+	mD3DInitializer->g_pImmediateContext->Draw(basicLevel->levelGeometryVector[0].vertices.size(), 0);
 
-		
-	
+	// Restore default states.
+	mD3DInitializer->g_pImmediateContext->RSSetState(0);
+	mD3DInitializer->g_pImmediateContext->OMSetDepthStencilState(0, 0);
+
+	// Not using directional lights so code under is commented.
+	// Restore light directions.
+	/*for (int i = 0; i < 3; ++i)
+	{
+	mDirLights[i].Direction = oldLightDirections[i];
+	}*/
+
+
+
 
 	//
 	// Draw the mirror to the back buffer as usual but with transparency
 	// blending so the reflection shows through.
 	// 
 
-	activeTech->GetDesc(&techDesc);
-	for (UINT p = 0; p < techDesc.Passes; ++p)
-	{
-		ID3DX11EffectPass* pass = activeTech->GetPassByIndex(p);
+	// Set per object constants.
+	world = XMMatrixIdentity();
+	worldInvTranspose = XMMatrixInverse(&XMMatrixDeterminant(world), XMMatrixTranspose(world));
+	worldViewProj = world *
+		DirectX::XMLoadFloat4x4(&mD3DInitializer->g_View) *
+		DirectX::XMLoadFloat4x4(&mD3DInitializer->g_Projection);
 
-		md3dImmediateContext->IASetVertexBuffers(0, 1, &mRoomVB, &stride, &offset);
+	// Mirror
+	mD3DInitializer->g_pImmediateContext->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
+	mD3DInitializer->g_pImmediateContext->Draw(basicLevel->levelGeometryVector[1].vertices.size(),
+		basicLevel->levelGeometryVector[0].vertices.size());
 
-		// Set per object constants.
-		XMMATRIX world = XMLoadFloat4x4(&mRoomWorld);
-		XMMATRIX worldInvTranspose = MathHelper::InverseTranspose(world);
-		XMMATRIX worldViewProj = world*view*proj;
 
-		Effects::BasicFX->SetWorld(world);
-		Effects::BasicFX->SetWorldInvTranspose(worldInvTranspose);
-		Effects::BasicFX->SetWorldViewProj(worldViewProj);
-		Effects::BasicFX->SetTexTransform(XMMatrixIdentity());
-		Effects::BasicFX->SetMaterial(mMirrorMat);
-		Effects::BasicFX->SetDiffuseMap(mMirrorDiffuseMapSRV);
-
-		// Mirror
-		md3dImmediateContext->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
-		pass->Apply(0, md3dImmediateContext);
-		md3dImmediateContext->Draw(6, 24);
-	}
-	
 	mD3DInitializer->g_pSwapChain->Present(0, 0);
 }
 
@@ -631,5 +623,5 @@ CleanupDevice();*/
 	HRESULT result = mD3DInitializer->g_pd3dDevice->CreateRasterizerState(&rasterDesc, &m_rasterState);
 	if (FAILED(result))
 	{
-		return;
-		}*/
+	return;
+	}*/
