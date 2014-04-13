@@ -7,6 +7,7 @@
 #include "WindowInitialization.h"
 #include "RenderStates.h"
 #include "BasicLevel.h"
+#include <map>
 
 class GameHandler{
 
@@ -16,7 +17,9 @@ public:
 	ToshRenderer* mTRenderer;
 	RenderStates* mTRenderStates;
 	BasicLevel* basicLevel;
-	
+
+	//map < shader name, map < model name, object position > >
+	std::map<std::string, std::map<std::string, DirectX::XMMATRIX>> shaderModelObjectMap;
 	
 	float rotatePointLightAngle = 0.0f;
 	float blendFactor[4];
