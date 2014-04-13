@@ -12,10 +12,14 @@ class GameHandler{
 
 public:
 	WindowInitializer* mWinInit;
-	D3DInitializer* mD3DInit;
+	D3DInitializer* mD3DInitializer;
 	ToshRenderer* mTRenderer;
 	RenderStates* mTRenderStates;
 	BasicLevel* basicLevel;
+	
+	
+	float rotatePointLightAngle = 0.0f;
+	float blendFactor[4];
 
 	GameHandler();
 	GameHandler(HINSTANCE hInstance, int nCmdShow);
