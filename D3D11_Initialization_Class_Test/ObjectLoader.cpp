@@ -1,8 +1,8 @@
-#include "GeometryLoader.h"
+#include "ObjectLoader.h"
 #include <fstream>
 
 
-bool GeometryLoader::LoadGeometry(std::string fileName, std::vector<Geometry>& geometry){
+bool ObjectLoader::LoadGeometry(std::string fileName, std::vector<Object>& geometry){
 	
 	bool loaded = false;
 
@@ -12,7 +12,7 @@ bool GeometryLoader::LoadGeometry(std::string fileName, std::vector<Geometry>& g
 	ObjModelParser objModelParser;
 
 	while (std::getline(fin, geometryFile)){
-		Geometry object(geometryFile);
+		Object object(geometryFile);
 		objModelParser.LoadObj(object);
 		geometry.push_back(object);
 		loaded = true;

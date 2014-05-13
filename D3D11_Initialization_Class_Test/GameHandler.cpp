@@ -59,7 +59,7 @@ GameHandler::GameHandler(HINSTANCE hInstance, int nCmdShow){
 
 	mD3DInitializer->InitializeWorldMatrix();
 
-	mD3DInitializer->InitializeViewMatrix(12.5f, 2.5f, 3.5f);
+	mD3DInitializer->InitializeViewMatrix(12.5f, 12.5f, 13.5f);
 
 	mD3DInitializer->InitializeProjectionMatrix();
 

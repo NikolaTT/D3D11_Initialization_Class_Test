@@ -3,8 +3,8 @@
 
 #include <string>
 #include <vector>
-#include "Geometry.h"
-#include "GeometryLoader.h"
+#include "Object.h"
+#include "ObjectLoader.h"
 #include "D3DInitializer.h"
 
 class BasicLevel{
@@ -12,7 +12,7 @@ class BasicLevel{
 public:
 	D3DInitializer* mTDevice;
 	std::string levelFileName;
-	std::vector<Geometry> levelGeometryVector;
+	std::vector<Object> levelGeometryVector;
 	std::vector<VertexTypes::VertexBasic> vertices;
 	int numVertices = 0;
 

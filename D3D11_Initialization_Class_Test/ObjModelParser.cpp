@@ -2,6 +2,7 @@
 #include <DirectXMath.h>
 
 using namespace DirectX;
+using std::stoi;
 
 void ObjModelParser::parseFaceVertex(std::string input, std::vector<UINT>& faceVertices,
 	std::vector<UINT>& faceUV, std::vector<UINT>& faceNormals){
@@ -83,7 +84,7 @@ void ObjModelParser::parseFaces(std::string input, std::vector<UINT>& faceVertic
 	parseFaceVertex(currentSubstring, faceVertices, faceUV, faceNormals);
 }
 
-bool ObjModelParser::LoadObj(Geometry& object){
+bool ObjModelParser::LoadObj(Object& object){
 
 	std::ifstream fin(object.fileName);
 	std::ofstream fout("debugLoadingObj.txt");
@@ -91,6 +92,7 @@ bool ObjModelParser::LoadObj(Geometry& object){
 	//UINT numMaterials = 0;
 	UINT numVertices = 0;
 	UINT numTriangles = 0;
+	UINT numIndices = 0;
 	//UINT numBones = 0;
 	//UINT numAnimationClips = 0;
 
@@ -103,26 +105,23 @@ bool ObjModelParser::LoadObj(Geometry& object){
 
 	if (fin)
 	{
-		/*fin >> ignore; // file header text
-		fin >> ignore >> numMaterials;
-		fin >> ignore >> numVertices;
-		fin >> ignore >> numTriangles;
-		fin >> ignore >> numBones;
-		fin >> ignore >> numAnimationClips;*/
-
+		//get name of object
 		std::getline(fin, ignore);
+		object.ObjectName = ignore.substr(5, ignore.size());
+		//get object rendering technique
 		std::getline(fin, ignore);
+		//object.Technique = ignore.substr(10, ignore.size());
+		//get object vertex count;
+		std:getline(fin, ignore);
+		numVertices = stoi(ignore.substr(16, ignore.size()));
+		//get object index count
 		std::getline(fin, ignore);
-		std::getline(fin, ignore);
-
-		std::vector<XMFLOAT4> vertices;
-		std::vector<XMFLOAT2> UV;
-		std::vector<XMFLOAT3> normals;
-		std::vector<UINT> faceVertices;
-		std::vector<UINT> faceUV;
-		std::vector<UINT> faceNormals;
-
+		numIndices = stoi(ignore.substr(15, ignore.size()));
+		
+		
 		while (std::getline(fin, ignore)){
+			
+			
 			int i = 0;
 			if (ignore[i] == 'v'){
 				i++;
@@ -144,6 +143,12 @@ bool ObjModelParser::LoadObj(Geometry& object){
 					while (ignore[j] != ' ' && j != ignore.length()){
 						j++;
 					}
+
+					std::ofstream truck("truck.txt", std::ios_base::app);
+					truck << "File name : " << object.fileName << "\n";
+					truck << "ignore: " << ignore << '\n';
+					truck << "NumF : " << numF << "   " <<  i << "  " << j << "\n";
+					truck.close();
 
 					numF = ignore.substr(i, j - i);
 					UV2.y = std::stof(numF);

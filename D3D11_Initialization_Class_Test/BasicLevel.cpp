@@ -2,7 +2,7 @@
 
 BasicLevel::BasicLevel(std::string fileName) : levelFileName(fileName){
 
-	GeometryLoader levelGeometryLoader;
+	ObjectLoader levelGeometryLoader;
 	levelGeometryLoader.LoadGeometry(levelFileName, levelGeometryVector);
 
 	for (int i = 0; i < levelGeometryVector.size(); i++){

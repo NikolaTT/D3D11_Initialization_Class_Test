@@ -8,14 +8,15 @@
 
 typedef unsigned short USHORT;
 
-class Geometry{
+class Object{
 
 public:
 	std::string fileName;
+	std::string ObjectName;
 	std::vector<VertexTypes::VertexBasic> vertices;
 	std::vector<USHORT> indices;
 
-	Geometry(std::string fileName);
+	Object(std::string fileName);
 };
 
 #endif

@@ -94,8 +94,8 @@
     <ClCompile Include="BasicLevel.cpp" />
     <ClCompile Include="D3DInitializer.cpp" />
     <ClCompile Include="GameHandler.cpp" />
-    <ClCompile Include="Geometry.cpp" />
-    <ClCompile Include="GeometryLoader.cpp" />
+    <ClCompile Include="Object.cpp" />
+    <ClCompile Include="ObjectLoader.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="ObjModelParser.cpp" />
     <ClCompile Include="RenderStates.cpp" />
@@ -111,8 +111,8 @@
     <ClInclude Include="ConstantBufferHelper.h" />
     <ClInclude Include="D3DInitializer.h" />
     <ClInclude Include="GameHandler.h" />
-    <ClInclude Include="Geometry.h" />
-    <ClInclude Include="GeometryLoader.h" />
+    <ClInclude Include="Object.h" />
+    <ClInclude Include="ObjectLoader.h" />
     <ClInclude Include="LightTypes.h" />
     <ClInclude Include="ObjModelParser.h" />
     <ClInclude Include="RenderStates.h" />

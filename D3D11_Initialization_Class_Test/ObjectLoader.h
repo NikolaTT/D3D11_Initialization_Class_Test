@@ -1,15 +1,15 @@
 #ifndef H_GEOMETRY_LOADER
 #define H_GEOMETRY_LOADER
 
-#include "Geometry.h"
+#include "Object.h"
 #include "ObjModelParser.h"
 
 //fileName includes names of files to load
 
-class GeometryLoader{
+class ObjectLoader{
 
 public:
-	bool LoadGeometry(std::string fileName, std::vector<Geometry>& geometry);
+	bool LoadGeometry(std::string fileName, std::vector<Object>& geometry);
 };
 
 #endif
