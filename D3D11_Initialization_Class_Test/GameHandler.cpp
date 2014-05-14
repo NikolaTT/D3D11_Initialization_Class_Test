@@ -1,4 +1,5 @@
 #include "GameHandler.h"
+#include "InputLayoutDescription.h"
 #include <DirectXMath.h>
 
 using namespace DirectX;

@@ -7,11 +7,14 @@
 //#include <d3d11_1.h>
 #include "D3DInitializer.h"
 #include "DirectXLibraries\DirectXTex\DirectXTex.h"
+#include <map>
+#include "Technique.h"
 
 class ToshRenderer{
 
 public:
 
+	std::map<std::string, Technique> techniquesMap;
 	D3DInitializer* mTDevice;
 
 	/*ToshRenderer(D3DInitializer* mTDevice);

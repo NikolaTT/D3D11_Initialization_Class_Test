@@ -1,10 +1,45 @@
 #include "ToshRenderer.h"
+#include <fstream>
 #include <DirectXMath.h>
-using namespace DirectX;
+#include <string>
+using namespace DirectX; using std::ifstream;
 
 ToshRenderer::ToshRenderer(D3DInitializer* mTDevice){// : mDirLight(), mPointLight(), mSpotLight(), CubeMat(){
 	
 	this->mTDevice = mTDevice;
+
+	//load techniques; order: VS, PS, HS, DS, CS
+	ifstream techniquesFile("techniques.txt");
+	std::string techniqueString;
+	std::string shaderString;
+	while (techniquesFile){
+
+
+		std::getline(techniquesFile, techniqueString);
+		if (techniqueString.find("technique") != std::string::npos){
+			Technique currentTech;
+			techniqueString = techniqueString.substr(12, techniqueString.length());
+			getline(techniquesFile, shaderString);
+			currentTech.setVertexShader(shaderString);
+			getline(techniquesFile, shaderString);
+			currentTech.setPixelShader(shaderString);
+			getline(techniquesFile, shaderString);
+			currentTech.setHullShader(shaderString);
+			getline(techniquesFile, shaderString);
+			currentTech.setDomainShader(shaderString);
+			techniquesMap[techniqueString] = currentTech;
+		}
+	}
+
+
+
+
+
+
+
+
+
+
 	// Directional light.
 	
 	// Directional light options for debugging Point Light

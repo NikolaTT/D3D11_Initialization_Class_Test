@@ -26,7 +26,7 @@ public:
 
 	void parseFaces(std::string input, std::vector<UINT>& faceVertices, std::vector<UINT>& faceUV, std::vector<UINT>& faceNormals);
 	void parseFaceVertex(std::string input, std::vector<UINT>& faceVertices, std::vector<UINT>& faceUV, std::vector<UINT>& faceNormals);
-
+	float parseVertex(std::string input);
 
 private:
 	/*void ReadMaterials(std::ifstream& fin, UINT numMaterials, std::vector<M3dMaterial>& mats);

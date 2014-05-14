@@ -96,6 +96,9 @@ bool ObjModelParser::LoadObj(Object& object){
 	//UINT numBones = 0;
 	//UINT numAnimationClips = 0;
 
+	delete object.indices;
+	object.indices = new USHORT[numIndices];
+
 	std::string ignore;
 
 	int end = fin.end;
@@ -107,10 +110,10 @@ bool ObjModelParser::LoadObj(Object& object){
 	{
 		//get name of object
 		std::getline(fin, ignore);
-		object.ObjectName = ignore.substr(5, ignore.size());
+		object.objectName = ignore.substr(5, ignore.size());
 		//get object rendering technique
 		std::getline(fin, ignore);
-		//object.Technique = ignore.substr(10, ignore.size());
+		object.techniqueName = ignore.substr(10, ignore.size());
 		//get object vertex count;
 		std:getline(fin, ignore);
 		numVertices = stoi(ignore.substr(16, ignore.size()));
@@ -118,8 +121,28 @@ bool ObjModelParser::LoadObj(Object& object){
 		std::getline(fin, ignore);
 		numIndices = stoi(ignore.substr(15, ignore.size()));
 		
+		for (int i = 0; i < numVertices; i++){
+			VertexTypes::VertexBasic tempVB;
+			
+			fin >> tempVB.Pos.x;
+			fin >> tempVB.Pos.y;
+			fin >> tempVB.Pos.z;
+			tempVB.Pos.w = 1.00f;
+
+			fin >> tempVB.Normal.x;
+			fin >> tempVB.Normal.y;
+			fin >> tempVB.Normal.z;
+
+			fin >> tempVB.Tex.x;
+			fin >> tempVB.Tex.y;			
+		}
+
+		for (int i = 0; i < numIndices; i++){
+			fin >> object.indices[i];
+		}
 		
-		while (std::getline(fin, ignore)){
+		
+		/*while (std::getline(fin, ignore)){
 			
 			
 			int i = 0;
@@ -226,9 +249,9 @@ bool ObjModelParser::LoadObj(Object& object){
 				i += 2;
 				parseFaces(ignore.substr(i, ignore.length()), faceVertices, faceUV, faceNormals);
 			}
-		}
+		}*/
 
-		for (int i = 0; i < faceVertices.size(); i++){
+		/*for (int i = 0; i < faceVertices.size(); i++){
 			VertexTypes::VertexBasic V;
 			V.Pos = vertices.at(faceVertices[i] - 1);
 			V.Tex = UV.at(faceUV[i] - 1);
@@ -236,7 +259,7 @@ bool ObjModelParser::LoadObj(Object& object){
 			V.Tangent = XMFLOAT3(1.0f, 1.0f, 1.0f);
 			V.DisplacementTex = UV.at(faceUV[i] - 1);
 			object.vertices.push_back(V);
-		}
+		}*/
 
 		for (int i = 0; i < object.vertices.size(); i++){
 			fout << '\n' << i << ": " << object.vertices[i].Pos.x << " " << object.vertices[i].Pos.y << " " << object.vertices[i].Pos.z << '\n';

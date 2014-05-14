@@ -12,9 +12,10 @@ class Object{
 
 public:
 	std::string fileName;
-	std::string ObjectName;
+	std::string objectName;
+	std::string techniqueName;
 	std::vector<VertexTypes::VertexBasic> vertices;
-	std::vector<USHORT> indices;
+	USHORT* indices;
 
 	Object(std::string fileName);
 };
