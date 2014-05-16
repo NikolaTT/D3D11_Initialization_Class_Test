@@ -8,6 +8,7 @@
 #include "RenderStates.h"
 #include "Technique.h"
 #include "BasicLevel.h"
+#include "InputLayoutDescription.h"
 #include <map>
 
 class GameHandler{
@@ -18,16 +19,19 @@ public:
 	ToshRenderer* mTRenderer;
 	RenderStates* mTRenderStates;
 	BasicLevel* basicLevel;
-	
+	InputLayoutDescription* layouts;
+	std::map<std::string, ID3D11InputLayout*> g_pVertexLayoutMap;
+	std::map<std::string, Technique> techniqueMap;
 
 	//map < shader name, map < model name, object position > >
 	std::map<std::string, std::map<std::string, DirectX::XMMATRIX>> shaderModelObjectMap;
-	
+
 	float rotatePointLightAngle = 0.0f;
 	float blendFactor[4];
 
 	GameHandler();
 	GameHandler(HINSTANCE hInstance, int nCmdShow);
+
 
 	void update();
 	void render();

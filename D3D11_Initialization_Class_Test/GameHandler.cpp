@@ -1,5 +1,4 @@
 #include "GameHandler.h"
-#include "InputLayoutDescription.h"
 #include <DirectXMath.h>
 
 using namespace DirectX;
@@ -11,6 +10,7 @@ GameHandler::GameHandler(HINSTANCE hInstance, int nCmdShow){
 	mD3DInitializer = new D3DInitializer(mWinInit->g_hWnd);
 	mTRenderer = new ToshRenderer(mD3DInitializer);
 	RenderStates* mTRenderStates = new RenderStates();
+	layouts = new InputLayoutDescription();
 	mTRenderStates->InitAll(mD3DInitializer->g_pd3dDevice);
 	basicLevel = new BasicLevel("level1.txt");
 	basicLevel->setInitializer(mD3DInitializer);

@@ -110,16 +110,16 @@ bool ObjModelParser::LoadObj(Object& object){
 	{
 		//get name of object
 		std::getline(fin, ignore);
-		object.objectName = ignore.substr(5, ignore.size());
+		object.objectName = ignore.substr(5, std::string::npos);
 		//get object rendering technique
 		std::getline(fin, ignore);
-		object.techniqueName = ignore.substr(10, ignore.size());
+		object.techniqueName = ignore.substr(10, std::string::npos);
 		//get object vertex count;
 		std:getline(fin, ignore);
-		numVertices = stoi(ignore.substr(16, ignore.size()));
+		numVertices = stoi(ignore.substr(16, std::string::npos));
 		//get object index count
 		std::getline(fin, ignore);
-		numIndices = stoi(ignore.substr(15, ignore.size()));
+		numIndices = stoi(ignore.substr(15, std::string::npos));
 		
 		for (int i = 0; i < numVertices; i++){
 			VertexTypes::VertexBasic tempVB;

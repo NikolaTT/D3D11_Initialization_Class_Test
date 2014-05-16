@@ -101,6 +101,7 @@
     <ClCompile Include="ObjModelParser.cpp" />
     <ClCompile Include="RenderStates.cpp" />
     <ClCompile Include="Technique.cpp" />
+    <ClCompile Include="TechniqueLoader.cpp" />
     <ClCompile Include="Temp.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -122,6 +123,7 @@
     <ClInclude Include="ShaderHandler.h" />
     <ClInclude Include="StringManipulator.h" />
     <ClInclude Include="Technique.h" />
+    <ClInclude Include="TechniqueLoader.h" />
     <ClInclude Include="ToshRenderer.h" />
     <ClInclude Include="VertexCompareFunctions.h" />
     <ClInclude Include="VertexTypes.h" />
