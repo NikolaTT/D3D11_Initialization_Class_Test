@@ -771,3 +771,119 @@ bool ObjModelParser::LoadObj(Geometry& object){
 
 
 }
+
+
+/*HRESULT CompileShaderFromFile(WCHAR* name, LPCSTR EntryPoint, LPCSTR ShaderModel, ID3DBlob** Blob);
+HRESULT CreateVertexShader(const void *pShaderBytecode, SIZE_T BytecodeLength, ID3D11ClassLinkage *pClassLinkage, ID3D11VertexShader **ppVertexShader);
+HRESULT CreatePixelShader(const void *pShaderBytecode, SIZE_T BytecodeLength, ID3D11ClassLinkage *pClassLinkage, ID3D11PixelShader **ppPixelShader);
+HRESULT CreateHullShader(const void *pShaderBytecode, SIZE_T BytecodeLength, ID3D11ClassLinkage *pClassLinkage, ID3D11HullShader **ppHullShader);
+HRESULT CreateDomainShader(const void *pShaderBytecode, SIZE_T BytecodeLength, ID3D11ClassLinkage *pClassLinkage, ID3D11DomainShader **ppDomainShader);*/
+
+
+//have not checked for FAIL
+HRESULT D3DInitializer::CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut){
+	HRESULT hr = S_OK;
+
+	DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
+#if defined( DEBUG ) || defined( _DEBUG )
+	// Set the D3DCOMPILE_DEBUG flag to embed debug information in the shaders.
+	// Setting this flag improves the shader debugging experience, but still allows 
+	// the shaders to be optimized and to run exactly the way they will run in 
+	// the release configuration of this program.
+	dwShaderFlags |= D3DCOMPILE_DEBUG;
+#endif
+
+	ID3DBlob* pErrorBlob = nullptr;
+	hr = D3DCompileFromFile(szFileName, nullptr, D3D_COMPILE_STANDARD_FILE_INCLUDE, szEntryPoint, szShaderModel,
+		dwShaderFlags, 0, ppBlobOut, &pErrorBlob);
+	if (FAILED(hr))
+	{
+		if (pErrorBlob)
+		{
+			std::ofstream fout("Shader_Debug.txt");
+			fout << reinterpret_cast<const char*>(pErrorBlob->GetBufferPointer());
+			OutputDebugStringA(reinterpret_cast<const char*>(pErrorBlob->GetBufferPointer()));
+			pErrorBlob->Release();
+		}
+		return hr;
+	}
+	if (pErrorBlob) pErrorBlob->Release();
+
+	return S_OK;
+
+}
+
+HRESULT D3DInitializer::CreateVertexShader(const void *pShaderBytecode, SIZE_T BytecodeLength,
+	ID3D11ClassLinkage *pClassLinkage, ID3D11VertexShader **ppVertexShader){
+
+	HRESULT hr = S_OK;
+
+	hr = g_pd3dDevice->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), nullptr, &g_pVertexShader);
+	if (FAILED(hr))
+	{
+		pVSBlob->Release();
+		return hr;
+	}
+}
+
+void D3DInitializer::AddInputLayout(LPCSTR SemanticName, UINT SemanticIndex, DXGI_FORMAT Format,
+	UINT InputSlot, UINT AlignedByteOffset, D3D11_INPUT_CLASSIFICATION InputSlotClass, UINT InstanceDataStepRate){
+
+	layout->AddInputLayout(SemanticName, SemanticIndex, Format,
+		InputSlot, AlignedByteOffset, InputSlotClass, InstanceDataStepRate);
+
+}
+
+HRESULT D3DInitializer::CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC *pInputElementDescs, UINT NumElements, const void *pShaderBytecodeWithInputSignature,
+	SIZE_T BytecodeLength, ID3D11InputLayout **ppInputLayout){
+
+	HRESULT hr;
+	hr = g_pd3dDevice->CreateInputLayout(layout->mTlayout, layout->numElements, pVSBlob->GetBufferPointer(),
+		pVSBlob->GetBufferSize(), &g_pVertexLayout);
+	pVSBlob->Release();
+	if (FAILED(hr))
+		return hr;
+
+}
+
+void D3DInitializer::setInputLayout(){
+	g_pImmediateContext->IASetInputLayout(g_pVertexLayout);
+}
+
+HRESULT D3DInitializer::CreateHullShader(const void *pShaderBytecode, SIZE_T BytecodeLength,
+	ID3D11ClassLinkage *pClassLinkage, ID3D11HullShader **ppHullShader){
+
+	HRESULT hr = S_OK;
+	hr = g_pd3dDevice->CreateHullShader(pHSBlob->GetBufferPointer(), pHSBlob->GetBufferSize(), nullptr, &g_pHullShader);
+	pHSBlob->Release();
+	if (FAILED(hr))
+		return hr;
+}
+
+HRESULT D3DInitializer::CreateDomainShader(const void *pShaderBytecode, SIZE_T BytecodeLength,
+	ID3D11ClassLinkage *pClassLinkage, ID3D11DomainShader **ppHullShader){
+
+	HRESULT hr = S_OK;
+	hr = g_pd3dDevice->CreateDomainShader(pDSBlob->GetBufferPointer(), pDSBlob->GetBufferSize(), nullptr, &g_pDomainShader);
+	pDSBlob->Release();
+	if (FAILED(hr))
+		return hr;
+}
+
+
+
+HRESULT D3DInitializer::CreatePixelShader(const void *pShaderBytecode, SIZE_T BytecodeLength,
+	ID3D11ClassLinkage *pClassLinkage, ID3D11PixelShader **ppPixelShader){
+
+	HRESULT hr = S_OK;
+	hr = g_pd3dDevice->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &g_pPixelShader);
+	pPSBlob->Release();
+	if (FAILED(hr))
+		return hr;
+
+}
+
+void AddInputLayout(LPCSTR SemanticName, UINT SemanticIndex, DXGI_FORMAT Format,
+	UINT InputSlot, UINT AlignedByteOffset, D3D11_INPUT_CLASSIFICATION InputSlotClass, UINT InstanceDataStepRate);
+HRESULT CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC *pInputElementDescs, UINT NumElements, const void *pShaderBytecodeWithInputSignature,
+	SIZE_T BytecodeLength, ID3D11InputLayout **ppInputLayout);

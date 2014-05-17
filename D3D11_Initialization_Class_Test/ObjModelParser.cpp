@@ -96,7 +96,7 @@ bool ObjModelParser::LoadObj(Object& object){
 	//UINT numBones = 0;
 	//UINT numAnimationClips = 0;
 
-	delete object.indices;
+	delete[] object.indices;
 	object.indices = new USHORT[numIndices];
 
 	std::string ignore;

@@ -1,4 +1,5 @@
 #include "GameHandler.h"
+#include "TechniqueLoader.h"
 #include <DirectXMath.h>
 
 using namespace DirectX;
@@ -19,44 +20,14 @@ GameHandler::GameHandler(HINSTANCE hInstance, int nCmdShow){
 	blendFactor[2] = 0.0f;
 	blendFactor[3] = 0.0f;
 
+	std::string techFile = "techniques.txt";
+	TechniqueLoader techLoader(techFile, techniqueMap,
+		mD3DInitializer->g_pd3dDevice, *layouts, g_pVertexLayoutMap);
 
 
 	//Copied from main
 	mD3DInitializer->CreateDepthStencilView();
 
-	mD3DInitializer->CompileShaderFromFile(L"OpaqueVS.hlsl", "VS", "vs_4_0", &(mD3DInitializer->pVSBlob));
-
-	mD3DInitializer->CreateVertexShader(mD3DInitializer->pVSBlob->GetBufferPointer(), mD3DInitializer->pVSBlob->GetBufferSize(), nullptr, &(mD3DInitializer->g_pVertexShader));
-
-	mD3DInitializer->AddInputLayout("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0);
-
-	mD3DInitializer->AddInputLayout("NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0);
-
-	mD3DInitializer->AddInputLayout("TEXTURE", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0);
-
-	mD3DInitializer->AddInputLayout("TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0);
-
-	mD3DInitializer->AddInputLayout("DIS_TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0);
-
-	mD3DInitializer->CreateInputLayout(mD3DInitializer->layout->mTlayout, mD3DInitializer->layout->numElements, mD3DInitializer->pVSBlob->GetBufferPointer(),
-		mD3DInitializer->pVSBlob->GetBufferSize(), &(mD3DInitializer->g_pVertexLayout));
-
-	mD3DInitializer->setInputLayout();
-
-	mD3DInitializer->CompileShaderFromFile(L"OpaquePS.hlsl", "PS", "ps_4_0", &(mD3DInitializer->pPSBlob));
-
-	mD3DInitializer->CreatePixelShader(mD3DInitializer->pPSBlob->GetBufferPointer(), mD3DInitializer->pPSBlob->GetBufferSize(), nullptr,
-		&mD3DInitializer->g_pPixelShader);
-
-	mD3DInitializer->CompileShaderFromFile(L"OpaqueHS.hlsl", "HS", "hs_5_0", &(mD3DInitializer->pHSBlob));
-
-	mD3DInitializer->CreateHullShader(mD3DInitializer->pHSBlob->GetBufferPointer(), mD3DInitializer->pHSBlob->GetBufferSize(), nullptr,
-		&mD3DInitializer->g_pHullShader);
-
-	mD3DInitializer->CompileShaderFromFile(L"OpaqueDS.hlsl", "DS", "ds_5_0", &(mD3DInitializer->pDSBlob));
-
-	mD3DInitializer->CreateDomainShader(mD3DInitializer->pDSBlob->GetBufferPointer(), mD3DInitializer->pDSBlob->GetBufferSize(), nullptr,
-		&mD3DInitializer->g_pDomainShader);
 
 	mD3DInitializer->InitializeWorldMatrix();
 
@@ -95,13 +66,13 @@ GameHandler::GameHandler(HINSTANCE hInstance, int nCmdShow){
 
 	mD3DInitializer->CreateConstantBuffer();
 
-	mD3DInitializer->SetVertexShader();
+	mD3DInitializer->SetVertexShader(techniqueMap["opaque"].g_pVertexShader);
 
-	mD3DInitializer->SetPixelShader();
+	mD3DInitializer->SetPixelShader(techniqueMap["opaque"].g_pPixelShader);
 
-	mD3DInitializer->SetHullShader();
+	mD3DInitializer->SetHullShader(techniqueMap["opaque"].g_pHullShader);
 
-	mD3DInitializer->SetDomainShader();
+	mD3DInitializer->SetDomainShader(techniqueMap["opaque"].g_pDomainShader);
 
 	mTRenderer->CreateCBPerFrame();
 	mTRenderer->CreateCBPerObject();

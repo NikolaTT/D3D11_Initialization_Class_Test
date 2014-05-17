@@ -9,58 +9,6 @@
 #include "VertexTypes.h"
 #include "LightTypes.h"
 
-struct ToshLayout{
-
-	D3D11_INPUT_ELEMENT_DESC* mTlayout;
-	UINT numElements = 0;
-
-	void eraseInputLayout(){
-		delete mTlayout;
-		mTlayout = nullptr;
-		numElements = 0;
-	}
-
-	void AddInputLayout(LPCSTR SemanticName, UINT SemanticIndex, DXGI_FORMAT Format,
-		UINT InputSlot, UINT AlignedByteOffset, D3D11_INPUT_CLASSIFICATION InputSlotClass, UINT InstanceDataStepRate){
-
-		if (numElements==0){
-			mTlayout = new D3D11_INPUT_ELEMENT_DESC();
-			mTlayout->SemanticName = SemanticName;
-			mTlayout->SemanticIndex = SemanticIndex;
-			mTlayout->Format = Format;
-			mTlayout->InputSlot = InputSlot;
-			mTlayout->AlignedByteOffset = AlignedByteOffset;
-			mTlayout->InputSlotClass = InputSlotClass;
-			mTlayout->InstanceDataStepRate = InstanceDataStepRate;
-		}
-		else{
-			D3D11_INPUT_ELEMENT_DESC* layoutTemp = mTlayout;
-			mTlayout = new D3D11_INPUT_ELEMENT_DESC[numElements + 1];
-			memcpy(mTlayout, layoutTemp, numElements*sizeof(D3D11_INPUT_ELEMENT_DESC));
-			delete layoutTemp;
-			mTlayout[numElements].SemanticName = SemanticName;
-			mTlayout[numElements].SemanticIndex = SemanticIndex;
-			mTlayout[numElements].Format = Format;
-			mTlayout[numElements].InputSlot = InputSlot;
-			mTlayout[numElements].AlignedByteOffset = AlignedByteOffset;
-			mTlayout[numElements].InputSlotClass = InputSlotClass;
-			mTlayout[numElements].InstanceDataStepRate = InstanceDataStepRate;
-		}
-
-		numElements++;
-		/*layout = new D3D11_INPUT_ELEMENT_DESC();
-		layout->SemanticName = SemanticName;
-		layout->SemanticIndex = SemanticIndex;
-		layout->Format = Format;
-		layout->InputSlot = InputSlot;
-		layout->AlignedByteOffset = AlignedByteOffset;
-		layout->InputSlotClass = InputSlotClass;
-		layout->InstanceDataStepRate = InstanceDataStepRate;*/
-	}
-
-
-};
-
 struct SimpleVertex
 {
 	DirectX::XMFLOAT3 Pos;
@@ -95,21 +43,10 @@ public:
 	UINT width = 0;
 	UINT height = 0;
 
-	ID3D11VertexShader* g_pVertexShader;
-	ID3D11InputLayout* g_pVertexLayout = nullptr;
 	ID3D11Buffer* g_pVertexBuffer = nullptr;
-	ID3D11Buffer* g_pIndexBuffer = nullptr;
-	ID3D11PixelShader* g_pPixelShader;
-	ID3D11HullShader* g_pHullShader;
-	ID3D11DomainShader* g_pDomainShader;
-	ID3DBlob* pVSBlob = nullptr;
-	ID3DBlob* pPSBlob = nullptr;
-	ID3DBlob* pHSBlob = nullptr;
-	ID3DBlob* pDSBlob = nullptr;
-	
+	ID3D11Buffer* g_pIndexBuffer = nullptr;	
 
 	//ToshRenderer* mToshRenderer = nullptr;
-
 
 	ID3D11Buffer* g_pConstantBuffer = nullptr;
 	
@@ -120,8 +57,6 @@ public:
 	DirectX::XMFLOAT4X4 g_Projection;
 
 	ID3D11DepthStencilView* g_pDepthStencilView = nullptr;
-
-	ToshLayout* layout;
 	
 	VertexTypes::VertexBasic* vertices = nullptr;
 	UINT numVertices = 0;
@@ -137,11 +72,8 @@ public:
 
 	
 
-	void AddInputLayout(LPCSTR SemanticName, UINT SemanticIndex, DXGI_FORMAT Format,
-		UINT InputSlot, UINT AlignedByteOffset, D3D11_INPUT_CLASSIFICATION InputSlotClass, UINT InstanceDataStepRate);
-	HRESULT CreateInputLayout(const D3D11_INPUT_ELEMENT_DESC *pInputElementDescs, UINT NumElements, const void *pShaderBytecodeWithInputSignature,
-		SIZE_T BytecodeLength, ID3D11InputLayout **ppInputLayout);
-	void setInputLayout();
+	
+	void setInputLayout(ID3D11InputLayout* g_pVertexLayout);
 
 	HRESULT CreateVertexBuffer(DirectX::XMFLOAT3 p1, DirectX::XMFLOAT3 p2, DirectX::XMFLOAT3 p3, DirectX::XMFLOAT4 c1, DirectX::XMFLOAT4 c2, DirectX::XMFLOAT4 c3);
 	HRESULT CreateVertexBuffer(int numVertices);
@@ -157,16 +89,12 @@ public:
 
 	void ClearVertices();
 
-	HRESULT CompileShaderFromFile(WCHAR* name, LPCSTR EntryPoint, LPCSTR ShaderModel, ID3DBlob** Blob);
-	HRESULT CreateVertexShader(const void *pShaderBytecode, SIZE_T BytecodeLength, ID3D11ClassLinkage *pClassLinkage, ID3D11VertexShader **ppVertexShader);
-	HRESULT CreatePixelShader(const void *pShaderBytecode, SIZE_T BytecodeLength, ID3D11ClassLinkage *pClassLinkage, ID3D11PixelShader **ppPixelShader);
-	HRESULT CreateHullShader(const void *pShaderBytecode, SIZE_T BytecodeLength, ID3D11ClassLinkage *pClassLinkage, ID3D11HullShader **ppHullShader);
-	HRESULT CreateDomainShader(const void *pShaderBytecode, SIZE_T BytecodeLength, ID3D11ClassLinkage *pClassLinkage, ID3D11DomainShader **ppDomainShader);
+	
 
-	void SetVertexShader();
-	void SetPixelShader();
-	void SetHullShader();
-	void SetDomainShader();
+	void SetVertexShader(ID3D11VertexShader* g_pVertexShader);
+	void SetPixelShader(ID3D11PixelShader* g_pPixelShader);
+	void SetHullShader(ID3D11HullShader* g_pHullShader);
+	void SetDomainShader(ID3D11DomainShader* g_pDomainShader);
 	
 
 	void releaseBlob(ID3DBlob* blob);

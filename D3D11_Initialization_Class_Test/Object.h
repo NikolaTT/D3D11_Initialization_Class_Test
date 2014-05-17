@@ -15,7 +15,7 @@ public:
 	std::string objectName;
 	std::string techniqueName;
 	std::vector<VertexTypes::VertexBasic> vertices;
-	USHORT* indices;
+	USHORT* indices = nullptr;
 
 	Object(std::string fileName);
 };
