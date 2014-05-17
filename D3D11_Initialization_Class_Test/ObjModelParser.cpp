@@ -120,13 +120,17 @@ bool ObjModelParser::LoadObj(Object& object){
 		//get object index count
 		std::getline(fin, ignore);
 		numIndices = stoi(ignore.substr(15, std::string::npos));
-		
+		object.numIndices = (USHORT)numIndices;
+		object.indices = new USHORT[numIndices];
+
+
 		for (int i = 0; i < numVertices; i++){
 			VertexTypes::VertexBasic tempVB;
 			
 			fin >> tempVB.Pos.x;
 			fin >> tempVB.Pos.y;
 			fin >> tempVB.Pos.z;
+			fin >> tempVB.Pos.w;
 			tempVB.Pos.w = 1.00f;
 
 			fin >> tempVB.Normal.x;
@@ -134,7 +138,8 @@ bool ObjModelParser::LoadObj(Object& object){
 			fin >> tempVB.Normal.z;
 
 			fin >> tempVB.Tex.x;
-			fin >> tempVB.Tex.y;			
+			fin >> tempVB.Tex.y;
+			object.vertices.push_back(tempVB);
 		}
 
 		for (int i = 0; i < numIndices; i++){

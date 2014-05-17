@@ -156,14 +156,14 @@ void D3DInitializer::populateIndex(WORD indices2[], UINT numIndices){
 
 
 //CreateIndexBuffer number of vertices is hard coded!
-HRESULT D3DInitializer::CreateIndexBuffer(){
+HRESULT D3DInitializer::CreateIndexBuffer(USHORT numIndices){
 
 	HRESULT hr = S_OK;
 
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
 	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(WORD)* 36;        // 36 vertices needed for 12 triangles in a triangle list
+	bd.ByteWidth = sizeof(USHORT) * numIndices;        // 36 vertices needed for 12 triangles in a triangle list
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 

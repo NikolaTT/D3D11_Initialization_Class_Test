@@ -31,7 +31,7 @@ GameHandler::GameHandler(HINSTANCE hInstance, int nCmdShow){
 
 	mD3DInitializer->InitializeWorldMatrix();
 
-	mD3DInitializer->InitializeViewMatrix(12.5f, 12.5f, 13.5f);
+	mD3DInitializer->InitializeViewMatrix(4.5f, 4.5f, 4.5f);
 
 	mD3DInitializer->InitializeProjectionMatrix();
 
@@ -48,6 +48,9 @@ GameHandler::GameHandler(HINSTANCE hInstance, int nCmdShow){
 	mD3DInitializer->vertices = new VertexTypes::VertexBasic[basicLevel->vertices.size()];
 	basicLevel->setVertices();
 
+	mD3DInitializer->indices = new USHORT[basicLevel->indices.size()];
+	basicLevel->setIndices();
+
 
 	/*for (int i = 0; i < basicLevel->vertices.size(); i++){
 
@@ -59,8 +62,10 @@ GameHandler::GameHandler(HINSTANCE hInstance, int nCmdShow){
 	//}
 
 	mD3DInitializer->CreateVertexBuffer(basicLevel->vertices.size());
+	mD3DInitializer->CreateIndexBuffer(basicLevel->indices.size());
 
 	mD3DInitializer->SetVertexBuffer();
+	mD3DInitializer->SetIndexBuffer();
 
 	mD3DInitializer->SetPrimitiveTopology();
 
@@ -210,7 +215,9 @@ void GameHandler::render(){
 
 
 	//draw cube to both depth and stencil buffer as normal
-	mD3DInitializer->g_pImmediateContext->Draw(basicLevel->levelGeometryVector[0].vertices.size(), 0);
+	mD3DInitializer->g_pImmediateContext->DrawIndexed(basicLevel->levelGeometryVector[0].numIndices, 0, 0);
+		
+		//(basicLevel->levelGeometryVector[0].vertices.size(), 0);
 
 	//now draw mirror to stencil buffer only
 	//do not draw to render target
@@ -221,8 +228,8 @@ void GameHandler::render(){
 	mD3DInitializer->g_pImmediateContext->OMSetDepthStencilState(RenderStates::MarkMirrorDSS, 1);
 
 	//levelGeometryVector[1] is Mirror, [0] is Cube; Makes assumptions.
-	mD3DInitializer->g_pImmediateContext->Draw(basicLevel->levelGeometryVector[1].vertices.size(),
-		basicLevel->levelGeometryVector[0].vertices.size());
+	mD3DInitializer->g_pImmediateContext->DrawIndexed(basicLevel->levelGeometryVector[1].numIndices,
+		basicLevel->levelGeometryVector[0].numIndices, basicLevel->levelGeometryVector[0].vertices.size());
 
 	// Restore states.
 	mD3DInitializer->g_pImmediateContext->OMSetDepthStencilState(0, 0);
@@ -264,7 +271,7 @@ void GameHandler::render(){
 	// Only draw reflection into visible mirror pixels as marked by the stencil buffer. 
 	mD3DInitializer->g_pImmediateContext->OMSetDepthStencilState(RenderStates::DrawReflectionDSS, 1);
 
-	mD3DInitializer->g_pImmediateContext->Draw(basicLevel->levelGeometryVector[0].vertices.size(), 0);
+	mD3DInitializer->g_pImmediateContext->DrawIndexed(basicLevel->levelGeometryVector[0].numIndices, 0, 0);
 
 	// Restore default states.
 	mD3DInitializer->g_pImmediateContext->RSSetState(0);
@@ -294,8 +301,8 @@ void GameHandler::render(){
 
 	// Mirror
 	mD3DInitializer->g_pImmediateContext->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
-	mD3DInitializer->g_pImmediateContext->Draw(basicLevel->levelGeometryVector[1].vertices.size(),
-		basicLevel->levelGeometryVector[0].vertices.size());
+	mD3DInitializer->g_pImmediateContext->DrawIndexed(basicLevel->levelGeometryVector[1].numIndices,
+		basicLevel->levelGeometryVector[0].numIndices, basicLevel->levelGeometryVector[0].vertices.size());
 
 	// Light position
 
@@ -359,7 +366,8 @@ void GameHandler::render(){
 
 	mD3DInitializer->g_pImmediateContext->DSSetShaderResources(0, 1, &mTRenderer->g_pDisplacementTextureRV);
 
-	mD3DInitializer->g_pImmediateContext->Draw(basicLevel->levelGeometryVector[2].vertices.size(),
+	mD3DInitializer->g_pImmediateContext->DrawIndexed(basicLevel->levelGeometryVector[2].numIndices,
+		basicLevel->levelGeometryVector[0].numIndices + basicLevel->levelGeometryVector[1].numIndices, 
 		basicLevel->levelGeometryVector[0].vertices.size() + basicLevel->levelGeometryVector[1].vertices.size());
 
 

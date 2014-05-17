@@ -14,7 +14,8 @@ public:
 	std::string levelFileName;
 	std::vector<Object> levelGeometryVector;
 	std::vector<VertexTypes::VertexBasic> vertices;
-	int numVertices = 0;
+	std::vector<USHORT> indices;
+	
 
 	BasicLevel(){}
 
@@ -25,6 +26,7 @@ public:
 	}
 
 	void setVertices();
+	void setIndices();
 
 };
 

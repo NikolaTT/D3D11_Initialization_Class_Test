@@ -61,7 +61,7 @@ public:
 	VertexTypes::VertexBasic* vertices = nullptr;
 	UINT numVertices = 0;
 	
-	WORD* indices = nullptr;
+	USHORT* indices = nullptr;
 
 
 
@@ -81,7 +81,7 @@ public:
 	HRESULT AddVertexColor(DirectX::XMFLOAT4 color);
 
 	void populateIndex(WORD indices[], UINT numIndices);
-	HRESULT CreateIndexBuffer();
+	HRESULT CreateIndexBuffer(USHORT numIndices);
 	void SetIndexBuffer();
 
 	void SetVertexBuffer();
