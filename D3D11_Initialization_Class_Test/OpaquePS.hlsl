@@ -62,12 +62,12 @@ float4 PS(DomainOut pin) : SV_Target
 	diffuse += D;
 	spec += S;
 
-	//float4 litColor = ambient + diffuse + spec;
+	float4 litColor = ambient + diffuse + spec;
 
 		// Common to take alpha from diffuse material.
-	//litColor.a = gMaterial.Diffuse.a;
+	litColor.a = gMaterial.Diffuse.a;
 	
-	//return litColor;
+	return litColor;
 
 
 
@@ -76,5 +76,5 @@ float4 PS(DomainOut pin) : SV_Target
 	//return litColor + gCubeMap.Sample(samTriLinearSam, pin.PosL);
 	//return gCubeSideTexture.Sample(samAnisotropic, pin.UV);
 	//return gCubeMap.Sample(samTriLinearSam, pin.PosL);
-	return float4(1.0f, 0.0f, 0.0f, 1.0f);
+	//return float4(1.0f, 0.0f, 0.0f, 1.0f);
 }

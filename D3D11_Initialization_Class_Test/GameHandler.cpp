@@ -31,7 +31,7 @@ GameHandler::GameHandler(HINSTANCE hInstance, int nCmdShow){
 
 	mD3DInitializer->InitializeWorldMatrix();
 
-	mD3DInitializer->InitializeViewMatrix(4.5f, 4.5f, 4.5f);
+	mD3DInitializer->InitializeViewMatrix(14.5f, 14.5f, 14.5f);
 
 	mD3DInitializer->InitializeProjectionMatrix();
 
@@ -66,6 +66,9 @@ GameHandler::GameHandler(HINSTANCE hInstance, int nCmdShow){
 
 	mD3DInitializer->SetVertexBuffer();
 	mD3DInitializer->SetIndexBuffer();
+
+	mD3DInitializer->g_pImmediateContext->IASetInputLayout(g_pVertexLayoutMap["Basic32"]);
+
 
 	mD3DInitializer->SetPrimitiveTopology();
 
@@ -144,7 +147,7 @@ void GameHandler::render(){
 	XMStoreFloat3(&v_cbPerFrame.gPointLight.Position, gPointLightPos);
 	//v_cbPerFrame.gPointLight.Position.y += 10;
 
-	rotatePointLightAngle += 0.0001;
+	rotatePointLightAngle += 0.0003;
 
 	
 
