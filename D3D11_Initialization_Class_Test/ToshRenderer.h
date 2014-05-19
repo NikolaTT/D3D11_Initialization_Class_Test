@@ -26,6 +26,7 @@ public:
 	PointLight mPointLight;
 	SpotLight mSpotLight;
 	Material CubeMat;
+	Material MirrorMat;
 
 	ID3D11Buffer* g_pcbPerFrame = nullptr;
 	ID3D11Buffer* g_pcbPerObject = nullptr;

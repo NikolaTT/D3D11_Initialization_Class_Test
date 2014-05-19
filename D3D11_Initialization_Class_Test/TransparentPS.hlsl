@@ -62,6 +62,8 @@ float4 PS(DomainOut pin) : SV_Target
 	diffuse += D;
 	spec += S;
 
+	return float4(1.0f, 0.0f, 0.0f, 1.0f);
+
 	float4 litColor = ambient + diffuse + spec;
 
 		// Common to take alpha from diffuse material.

@@ -31,7 +31,7 @@ GameHandler::GameHandler(HINSTANCE hInstance, int nCmdShow){
 
 	mD3DInitializer->InitializeWorldMatrix();
 
-	mD3DInitializer->InitializeViewMatrix(14.5f, 14.5f, 14.5f);
+	mD3DInitializer->InitializeViewMatrix(4.5f, 3.0f, 6.5f);
 
 	mD3DInitializer->InitializeProjectionMatrix();
 
@@ -147,7 +147,8 @@ void GameHandler::render(){
 	XMStoreFloat3(&v_cbPerFrame.gPointLight.Position, gPointLightPos);
 	//v_cbPerFrame.gPointLight.Position.y += 10;
 
-	rotatePointLightAngle += 0.0003;
+	rotatePointLightAngle = -0.20;
+	rotatePointLightAngle += 0.00001;
 
 	
 
@@ -230,7 +231,7 @@ void GameHandler::render(){
 	// Do not write mirror depth to depth buffer at this point, otherwise it will occlude the reflection.
 	mD3DInitializer->g_pImmediateContext->OMSetDepthStencilState(RenderStates::MarkMirrorDSS, 1);
 
-	//levelGeometryVector[1] is Mirror, [0] is Cube; Makes assumptions.
+	//levelGeometryVector[1] is Mirror, [0] is Cube;
 	mD3DInitializer->g_pImmediateContext->DrawIndexed(basicLevel->levelGeometryVector[1].numIndices,
 		basicLevel->levelGeometryVector[0].numIndices, basicLevel->levelGeometryVector[0].vertices.size());
 
@@ -242,14 +243,81 @@ void GameHandler::render(){
 	// Draw the cube reflection.
 	//
 
-
+	//create mirror matrix
 	XMVECTOR mirrorPlane = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f); // xy plane
 	XMMATRIX R = XMMatrixReflect(mirrorPlane);
-	XMMATRIX world = R;
+	XMMATRIX world = XMMatrixIdentity() * R * XMMatrixTranslation(0.0f, 0.0f, -5.0f);
+	XMMATRIX viewProj = DirectX::XMLoadFloat4x4(&mD3DInitializer->g_View) *
+		DirectX::XMLoadFloat4x4(&mD3DInitializer->g_Projection);
 	XMMATRIX worldInvTranspose = DirectX::XMMatrixInverse(&DirectX::XMMatrixDeterminant(world), DirectX::XMMatrixTranspose(world));
 	XMMATRIX worldViewProj = world *
 		DirectX::XMLoadFloat4x4(&mD3DInitializer->g_View) *
 		DirectX::XMLoadFloat4x4(&mD3DInitializer->g_Projection);
+
+	//update constant buffer
+	v_cbPerObject.gWorld = XMMatrixTranspose(DirectX::XMLoadFloat4x4(&mD3DInitializer->g_World1) * R * XMMatrixTranslation(0.0f, 0.0f, -5.0f));
+	det = XMMatrixDeterminant(v_cbPerObject.gWorld);
+	v_cbPerObject.gWorldInvTranspose = XMMatrixInverse(&det, world);
+	v_cbPerObject.gWorldInvTranspose = XMMatrixTranspose(v_cbPerObject.gWorldInvTranspose);
+
+	v_cbPerObject.gWorldViewProj = XMMatrixTranspose(world
+		* DirectX::XMLoadFloat4x4(&mD3DInitializer->g_View)
+		* DirectX::XMLoadFloat4x4(&mD3DInitializer->g_Projection));
+	v_cbPerObject.gTexTransform = DirectX::XMMatrixIdentity();
+	v_cbPerObject.gViewProj = XMMatrixTranspose(DirectX::XMLoadFloat4x4(&mD3DInitializer->g_View)
+		* DirectX::XMLoadFloat4x4(&mD3DInitializer->g_Projection));
+
+
+	/*v_cbPerObject.gWorld = XMMatrixTranspose(world);
+	v_cbPerObject.gWorldInvTranspose = worldInvTranspose;
+	v_cbPerObject.gWorldViewProj = XMMatrixTranspose(worldViewProj);
+	v_cbPerObject.gViewProj = XMMatrixTranspose(viewProj);*/
+	
+	//Set VS Constant Buffer
+	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mTRenderer->g_pcbPerFrame, 0, nullptr, &v_cbPerFrame, 0, 0);
+	mD3DInitializer->g_pImmediateContext->VSSetConstantBuffers(1, 1, &mTRenderer->g_pcbPerFrame);
+
+	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mTRenderer->g_pcbPerObject, 0, nullptr, &v_cbPerObject, 0, 0);
+	mD3DInitializer->g_pImmediateContext->VSSetConstantBuffers(2, 1, &mTRenderer->g_pcbPerObject);
+
+
+
+	//Set PS Constant Buffer
+	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mTRenderer->g_pcbPerFrame, 0, nullptr, &v_cbPerFrame, 0, 0);
+	mD3DInitializer->g_pImmediateContext->PSSetConstantBuffers(1, 1, &mTRenderer->g_pcbPerFrame);
+
+	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mTRenderer->g_pcbPerObject, 0, nullptr, &v_cbPerObject, 0, 0);
+	mD3DInitializer->g_pImmediateContext->PSSetConstantBuffers(2, 1, &mTRenderer->g_pcbPerObject);
+
+	//Set PS Texture
+
+	mD3DInitializer->g_pImmediateContext->PSSetShaderResources(0, 1, &mTRenderer->g_pCubeMapRV);
+	mD3DInitializer->g_pImmediateContext->PSSetShaderResources(1, 1, &mTRenderer->g_pTextureRV);
+
+
+
+	//mD3DInitializer->g_pImmediateContext->VSSetConstantBuffers(0, 1, &mD3DInitializer->g_pConstantBuffer);
+	//mD3DInitializer->g_pImmediateContext->HSSetConstantBuffers(0, 1, &mD3DInitializer->g_pConstantBuffer);
+	//mD3DInitializer->g_pImmediateContext->DSSetConstantBuffers(0, 1, &mD3DInitializer->g_pConstantBuffer);
+
+
+
+
+	//Set DS Constant Buffer
+	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mTRenderer->g_pcbPerFrame, 0, nullptr, &v_cbPerFrame, 0, 0);
+	mD3DInitializer->g_pImmediateContext->DSSetConstantBuffers(1, 1, &mTRenderer->g_pcbPerFrame);
+
+	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mTRenderer->g_pcbPerObject, 0, nullptr, &v_cbPerObject, 0, 0);
+	mD3DInitializer->g_pImmediateContext->DSSetConstantBuffers(2, 1, &mTRenderer->g_pcbPerObject);
+
+	//Set DS Texture
+
+	mD3DInitializer->g_pImmediateContext->DSSetShaderResources(0, 1, &mTRenderer->g_pDisplacementTextureRV);
+
+	//mD3DInitializer->g_pImmediateContext->DrawIndexed(basicLevel->levelGeometryVector[2].numIndices,
+		//basicLevel->levelGeometryVector[0].numIndices + basicLevel->levelGeometryVector[1].numIndices,
+		//basicLevel->levelGeometryVector[0].vertices.size() + basicLevel->levelGeometryVector[1].vertices.size());
+
 
 
 	// Cache the old light directions, and reflect the light directions.
@@ -269,7 +337,7 @@ void GameHandler::render(){
 	//
 
 	// Cull clockwise triangles for reflection.
-	mD3DInitializer->g_pImmediateContext->RSSetState(RenderStates::CullClockwiseRS);
+	mD3DInitializer->g_pImmediateContext->RSSetState(RenderStates::NoCullRS);
 
 	// Only draw reflection into visible mirror pixels as marked by the stencil buffer. 
 	mD3DInitializer->g_pImmediateContext->OMSetDepthStencilState(RenderStates::DrawReflectionDSS, 1);
@@ -301,6 +369,66 @@ void GameHandler::render(){
 	worldViewProj = world *
 		DirectX::XMLoadFloat4x4(&mD3DInitializer->g_View) *
 		DirectX::XMLoadFloat4x4(&mD3DInitializer->g_Projection);
+
+	v_cbPerObject.gWorld = XMMatrixTranspose(DirectX::XMLoadFloat4x4(&mD3DInitializer->g_World1));
+
+	//Not true to original
+	det = XMMatrixDeterminant(v_cbPerObject.gWorld);
+	v_cbPerObject.gWorldInvTranspose = XMMatrixInverse(&det, v_cbPerObject.gWorld);
+	v_cbPerObject.gWorldInvTranspose = XMMatrixTranspose(v_cbPerObject.gWorldInvTranspose);
+
+	v_cbPerObject.gWorldViewProj = XMMatrixTranspose(DirectX::XMLoadFloat4x4(&mD3DInitializer->g_World1)
+		* DirectX::XMLoadFloat4x4(&mD3DInitializer->g_View)
+		* DirectX::XMLoadFloat4x4(&mD3DInitializer->g_Projection));
+	v_cbPerObject.gTexTransform = DirectX::XMMatrixIdentity();
+	v_cbPerObject.gViewProj = XMMatrixTranspose(DirectX::XMLoadFloat4x4(&mD3DInitializer->g_View)
+		* DirectX::XMLoadFloat4x4(&mD3DInitializer->g_Projection));
+
+	//
+	//End Constant Buffer Initialization
+	//
+
+
+	//Set VS Constant Buffer
+	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mTRenderer->g_pcbPerFrame, 0, nullptr, &v_cbPerFrame, 0, 0);
+	mD3DInitializer->g_pImmediateContext->VSSetConstantBuffers(1, 1, &mTRenderer->g_pcbPerFrame);
+
+	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mTRenderer->g_pcbPerObject, 0, nullptr, &v_cbPerObject, 0, 0);
+	mD3DInitializer->g_pImmediateContext->VSSetConstantBuffers(2, 1, &mTRenderer->g_pcbPerObject);
+
+
+
+	//Set PS Constant Buffer
+	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mTRenderer->g_pcbPerFrame, 0, nullptr, &v_cbPerFrame, 0, 0);
+	mD3DInitializer->g_pImmediateContext->PSSetConstantBuffers(1, 1, &mTRenderer->g_pcbPerFrame);
+
+	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mTRenderer->g_pcbPerObject, 0, nullptr, &v_cbPerObject, 0, 0);
+	mD3DInitializer->g_pImmediateContext->PSSetConstantBuffers(2, 1, &mTRenderer->g_pcbPerObject);
+
+	//Set PS Texture
+
+	mD3DInitializer->g_pImmediateContext->PSSetShaderResources(0, 1, &mTRenderer->g_pCubeMapRV);
+	mD3DInitializer->g_pImmediateContext->PSSetShaderResources(1, 1, &mTRenderer->g_pTextureRV);
+
+
+
+	//mD3DInitializer->g_pImmediateContext->VSSetConstantBuffers(0, 1, &mD3DInitializer->g_pConstantBuffer);
+	//mD3DInitializer->g_pImmediateContext->HSSetConstantBuffers(0, 1, &mD3DInitializer->g_pConstantBuffer);
+	//mD3DInitializer->g_pImmediateContext->DSSetConstantBuffers(0, 1, &mD3DInitializer->g_pConstantBuffer);
+
+
+
+
+	//Set DS Constant Buffer
+	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mTRenderer->g_pcbPerFrame, 0, nullptr, &v_cbPerFrame, 0, 0);
+	mD3DInitializer->g_pImmediateContext->DSSetConstantBuffers(1, 1, &mTRenderer->g_pcbPerFrame);
+
+	mD3DInitializer->g_pImmediateContext->UpdateSubresource(mTRenderer->g_pcbPerObject, 0, nullptr, &v_cbPerObject, 0, 0);
+	mD3DInitializer->g_pImmediateContext->DSSetConstantBuffers(2, 1, &mTRenderer->g_pcbPerObject);
+
+	//Set DS Texture
+
+	mD3DInitializer->g_pImmediateContext->DSSetShaderResources(0, 1, &mTRenderer->g_pDisplacementTextureRV);
 
 	// Mirror
 	mD3DInitializer->g_pImmediateContext->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
@@ -369,9 +497,9 @@ void GameHandler::render(){
 
 	mD3DInitializer->g_pImmediateContext->DSSetShaderResources(0, 1, &mTRenderer->g_pDisplacementTextureRV);
 
-	mD3DInitializer->g_pImmediateContext->DrawIndexed(basicLevel->levelGeometryVector[2].numIndices,
+	/*mD3DInitializer->g_pImmediateContext->DrawIndexed(basicLevel->levelGeometryVector[2].numIndices,
 		basicLevel->levelGeometryVector[0].numIndices + basicLevel->levelGeometryVector[1].numIndices, 
-		basicLevel->levelGeometryVector[0].vertices.size() + basicLevel->levelGeometryVector[1].vertices.size());
+		basicLevel->levelGeometryVector[0].vertices.size() + basicLevel->levelGeometryVector[1].vertices.size());*/
 
 
 	mD3DInitializer->g_pSwapChain->Present(0, 0);
