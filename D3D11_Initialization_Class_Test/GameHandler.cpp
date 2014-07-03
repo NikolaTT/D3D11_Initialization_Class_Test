@@ -1,8 +1,10 @@
 #include "GameHandler.h"
 #include "TechniqueLoader.h"
 #include <DirectXMath.h>
+#include <iostream>
 
-using namespace DirectX;
+
+using namespace DirectX; using namespace std;
 
 GameHandler::GameHandler(HINSTANCE hInstance, int nCmdShow){
 
